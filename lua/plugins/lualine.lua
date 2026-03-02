@@ -10,7 +10,7 @@ return {
 			local clients = vim.lsp.get_clients({ bufnr = 0 })
 
 			if #clients == 0 then
-				return ""
+				return "○"
 			end
 			return " " .. #clients
 		end

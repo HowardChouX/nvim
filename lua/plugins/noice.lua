@@ -36,6 +36,14 @@ return {
     notify = {
       enabled = true,
       view = "notify",
+      on_open = function(win)
+        vim.keymap.set("n", "<LeftMouse>", function()
+          vim.api.nvim_win_close(win, true)
+        end, { buffer = true, silent = true })
+        vim.keymap.set("i", "<LeftMouse>", function()
+          vim.api.nvim_win_close(win, true)
+        end, { buffer = true, silent = true })
+      end,
     },
     messages = {
       enabled = true,
@@ -109,18 +117,27 @@ return {
           event = "msg_show",
           min_height = 10,
         },
-        view = "split",
+        opts = { skip = true },
+      },
+      {
+        filter = {
+          event = "msg_show",
+          message = {
+            min_length = 20,
+          },
+        },
+        opts = { skip = true },
       },
     },
     views = {
       cmdline_popup = {
-        position = { row = 5, col = "50%" },
-        size = { width = 60, height = "auto" },
+        position = { row = 2, col = "50%" },
+        size = { width = 40, height = "auto" },
       },
       mini = {
         position = { row = -2, col = "100%" },
-        timeout = 3000,
-        size = { width = "auto", height = "auto" },
+        timeout = 150,
+        size = { width = 15, height = 1 },
         border = "none",
         zindex = 60,
         win_options = {

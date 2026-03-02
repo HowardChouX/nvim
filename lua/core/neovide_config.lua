@@ -35,8 +35,17 @@ if vim.g.neovide then
 
     -- 设置 Neovide 的字体 (例如 "JetBrainsMono Nerd Font:h12")
     vim.g.neovide_font_family = "JetBrainsMono Nerd Font"
-    vim.g.neovide_font_size = 10
+    vim.g.neovide_font_size = 14
     vim.o.guifont = "JetBrainsMono Nerd Font:h14"
+
+    -- 设置 fallback 字体以确保所有符号正确显示
+    vim.o.guifontset = "JetBrainsMono Nerd Font:h14,Symbols Nerd Font:h14"
+
+    -- 启用 Neovide 的内置字体渲染 (通常效果更好，推荐开启)
+    vim.g.neovide_no_multigrid = true
+
+    -- 启用 Neovide 的浮动窗口阴影
+    vim.g.neovide_floating_blur = true
 
     -- 启用 Neovide 的浮动窗口阴影
     vim.g.neovide_floating_blur = true

@@ -1,0 +1,354 @@
+--- Startup times for process: Primary (or UI client) ---
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.001  000.001: --- NVIM STARTING ---
+000.338  000.337: event init
+000.500  000.161: early init
+000.592  000.092: locale set
+000.686  000.094: init first window
+001.687  001.001: inits 1
+001.735  000.048: window checked
+001.745  000.009: parsing arguments
+003.824  000.169  000.169: require('vim.shared')
+004.198  000.147  000.147: require('vim.inspect')
+004.386  000.153  000.153: require('vim._options')
+004.396  000.553  000.253: require('vim._editor')
+004.401  000.841  000.118: require('vim._init_packages')
+004.408  001.822: init lua interpreter
+004.527  000.119: expanding arguments
+004.613  000.087: inits 2
+005.422  000.809: init highlight
+005.461  000.039: clear screen
+005.763  000.034  000.034: require('vim.keymap')
+007.422  000.256  000.256: sourcing nvim_exec2()
+007.752  002.284  001.994: require('vim._defaults')
+007.758  000.013: init default mappings & autocommands
+008.809  000.125  000.125: sourcing /usr/share/nvim/runtime/ftplugin.vim
+008.973  000.055  000.055: sourcing /usr/share/nvim/runtime/indent.vim
+009.208  000.134  000.134: sourcing /usr/share/nvim/archlinux.lua
+009.217  000.188  000.055: sourcing /etc/xdg/nvim/sysinit.vim
+010.233  000.938  000.938: require('core.neovide_config')
+010.721  000.480  000.480: require('core.basic')
+013.158  002.429  002.429: require('core.keymap')
+013.394  000.228  000.228: require('core.ime')
+014.270  000.722  000.722: require('lazy')
+014.326  000.033  000.033: require('ffi')
+014.424  000.041  000.041: require('vim.fs')
+014.605  000.175  000.175: require('vim.uri')
+014.630  000.299  000.082: require('vim.loader')
+014.878  000.219  000.219: require('lazy.stats')
+015.078  000.174  000.174: require('lazy.core.util')
+015.306  000.225  000.225: require('lazy.core.config')
+015.639  000.157  000.157: require('lazy.core.handler')
+016.319  000.069  000.069: require('lazy.pkg')
+016.330  000.357  000.288: require('lazy.core.meta')
+016.338  000.696  000.339: require('lazy.core.plugin')
+016.348  001.038  000.185: require('lazy.core.loader')
+017.233  000.069  000.069: require('lazy.async')
+017.617  000.212  000.212: require('lazy.manage.process')
+017.700  000.078  000.078: require('lazy.terminal')
+017.708  000.468  000.179: require('lazy.manage.task')
+017.712  000.623  000.086: require('lazy.manage.runner')
+017.718  000.712  000.089: require('lazy.manage')
+017.723  000.858  000.146: require('lazy.view.commands')
+017.827  000.069  000.069: require('lazy.core.fragments')
+022.506  000.211  000.211: require('lazy.core.handler.cmd')
+022.761  000.110  000.110: require('lazy.core.handler.event')
+022.765  000.250  000.140: require('lazy.core.handler.ft')
+022.824  000.056  000.056: require('lazy.core.handler.keys')
+024.160  000.010  000.010: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+024.179  000.002  000.002: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+024.579  000.167  000.167: sourcing nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0
+024.584  000.241  000.074: sourcing /usr/share/nvim/runtime/filetype.lua
+024.588  000.280  000.039: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+024.679  000.003  000.003: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+024.690  000.001  000.001: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+025.027  000.043  000.043: require('tokyonight.config')
+025.030  000.330  000.287: require('tokyonight')
+025.787  000.087  000.087: require('tokyonight.theme')
+026.739  000.117  000.117: require('tokyonight.util')
+026.747  000.292  000.175: require('tokyonight.colors')
+027.141  000.066  000.066: require('tokyonight.hsluv')
+027.645  000.099  000.099: require('tokyonight.groups')
+029.047  003.396  002.852: sourcing /home/chou/.local/share/nvim/lazy/tokyonight.nvim/colors/tokyonight.lua
+029.064  004.001  000.605: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+029.374  000.079  000.079: sourcing /usr/share/nvim/runtime/plugin/editorconfig.lua
+029.380  000.120  000.041: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+029.557  000.148  000.148: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+029.561  000.174  000.026: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+029.650  000.062  000.062: sourcing /usr/share/nvim/runtime/plugin/man.lua
+029.655  000.087  000.025: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.095  000.169  000.169: sourcing /usr/share/nvim/runtime/pack/dist/opt/matchit/plugin/matchit.vim
+030.114  000.433  000.264: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+030.117  000.457  000.024: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.265  000.117  000.117: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+030.270  000.143  000.026: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.311  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+030.317  000.037  000.027: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.407  000.066  000.066: sourcing /usr/share/nvim/runtime/plugin/osc52.lua
+030.411  000.089  000.023: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.571  000.132  000.132: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+030.575  000.159  000.028: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.687  000.080  000.080: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+030.692  000.106  000.026: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.751  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+030.755  000.058  000.040: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+030.894  000.110  000.110: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+030.901  000.142  000.032: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+031.018  000.073  000.073: sourcing /usr/share/nvim/runtime/plugin/tohtml.lua
+031.023  000.114  000.040: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+031.084  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+031.088  000.058  000.034: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+031.280  000.162  000.162: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+031.286  000.193  000.031: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+031.390  017.992  007.276: require('core.lazy')
+031.393  022.128  000.060: sourcing /home/chou/.config/nvim/init.lua
+031.401  001.147: sourcing vimrc file(s)
+031.647  000.055  000.055: sourcing /usr/share/nvim/runtime/filetype.lua
+031.816  000.058  000.058: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+031.911  000.209  000.150: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+031.927  000.262: inits 3
+034.279  002.352: reading ShaDa
+127679.395  127645.116: --- NVIM STARTED ---
+
+--- Startup times for process: Primary (or UI client) ---
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.001  000.001: --- NVIM STARTING ---
+000.326  000.324: event init
+000.532  000.206: early init
+000.634  000.102: locale set
+000.725  000.091: init first window
+001.616  000.892: inits 1
+001.657  000.040: window checked
+001.666  000.010: parsing arguments
+002.942  000.085  000.085: require('vim.shared')
+003.142  000.077  000.077: require('vim.inspect')
+003.243  000.083  000.083: require('vim._options')
+003.247  000.293  000.133: require('vim._editor')
+003.249  000.437  000.060: require('vim._init_packages')
+003.253  001.149: init lua interpreter
+003.329  000.077: expanding arguments
+003.423  000.094: inits 2
+003.859  000.436: init highlight
+003.884  000.026: clear screen
+004.119  000.023  000.023: require('vim.keymap')
+005.735  000.244  000.244: sourcing nvim_exec2()
+005.990  002.101  001.834: require('vim._defaults')
+005.994  000.008: init default mappings & autocommands
+006.729  000.080  000.080: sourcing /usr/share/nvim/runtime/ftplugin.vim
+006.827  000.039  000.039: sourcing /usr/share/nvim/runtime/indent.vim
+007.026  000.118  000.118: sourcing /usr/share/nvim/archlinux.lua
+007.035  000.163  000.045: sourcing /etc/xdg/nvim/sysinit.vim
+007.742  000.638  000.638: require('core.neovide_config')
+008.129  000.378  000.378: require('core.basic')
+010.559  002.425  002.425: require('core.keymap')
+010.761  000.195  000.195: require('core.ime')
+011.469  000.583  000.583: require('lazy')
+011.510  000.021  000.021: require('ffi')
+011.650  000.035  000.035: require('vim.fs')
+011.806  000.151  000.151: require('vim.uri')
+011.823  000.309  000.123: require('vim.loader')
+012.009  000.160  000.160: require('lazy.stats')
+012.206  000.172  000.172: require('lazy.core.util')
+012.437  000.227  000.227: require('lazy.core.config')
+012.758  000.146  000.146: require('lazy.core.handler')
+013.348  000.077  000.077: require('lazy.pkg')
+013.358  000.303  000.227: require('lazy.core.meta')
+013.365  000.604  000.301: require('lazy.core.plugin')
+013.374  000.933  000.183: require('lazy.core.loader')
+013.975  000.052  000.052: require('lazy.async')
+014.286  000.172  000.172: require('lazy.manage.process')
+014.362  000.073  000.073: require('lazy.terminal')
+014.371  000.392  000.146: require('lazy.manage.task')
+014.374  000.497  000.053: require('lazy.manage.runner')
+014.377  000.566  000.070: require('lazy.manage')
+014.380  000.669  000.103: require('lazy.view.commands')
+014.462  000.057  000.057: require('lazy.core.fragments')
+018.713  000.101  000.101: require('lazy.core.handler.cmd')
+018.811  000.051  000.051: require('lazy.core.handler.event')
+018.814  000.094  000.044: require('lazy.core.handler.ft')
+018.864  000.046  000.046: require('lazy.core.handler.keys')
+018.990  000.009  000.009: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+019.005  000.002  000.002: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.056  000.181  000.181: sourcing nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0
+020.067  000.298  000.116: sourcing /usr/share/nvim/runtime/filetype.lua
+020.073  000.343  000.046: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.261  000.005  000.005: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.272  000.001  000.001: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.921  000.056  000.056: require('tokyonight.config')
+020.939  000.655  000.599: require('tokyonight')
+021.892  000.063  000.063: require('tokyonight.theme')
+022.782  000.105  000.105: require('tokyonight.util')
+022.789  000.254  000.149: require('tokyonight.colors')
+023.144  000.129  000.129: require('tokyonight.hsluv')
+023.526  000.095  000.095: require('tokyonight.groups')
+024.837  003.080  002.540: sourcing /home/chou/.local/share/nvim/lazy/tokyonight.nvim/colors/tokyonight.lua
+024.848  003.871  000.791: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+025.104  000.063  000.063: sourcing /usr/share/nvim/runtime/plugin/editorconfig.lua
+025.109  000.100  000.036: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+025.306  000.161  000.161: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+025.311  000.187  000.027: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+025.523  000.145  000.145: sourcing /usr/share/nvim/runtime/plugin/man.lua
+025.529  000.205  000.060: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.060  000.173  000.173: sourcing /usr/share/nvim/runtime/pack/dist/opt/matchit/plugin/matchit.vim
+026.082  000.463  000.290: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+026.086  000.538  000.075: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.240  000.117  000.117: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+026.245  000.143  000.026: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.330  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+026.350  000.053  000.043: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.439  000.059  000.059: sourcing /usr/share/nvim/runtime/plugin/osc52.lua
+026.444  000.087  000.028: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.620  000.150  000.150: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+026.624  000.175  000.025: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.716  000.057  000.057: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+026.720  000.084  000.027: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.774  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+026.777  000.052  000.035: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.883  000.076  000.076: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+026.888  000.105  000.029: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.970  000.048  000.048: sourcing /usr/share/nvim/runtime/plugin/tohtml.lua
+026.975  000.082  000.033: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.025  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+027.028  000.048  000.029: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.187  000.121  000.121: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+027.192  000.151  000.030: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.280  016.515  006.246: require('core.lazy')
+027.283  020.206  000.055: sourcing /home/chou/.config/nvim/init.lua
+027.290  000.809: sourcing vimrc file(s)
+027.516  000.042  000.042: sourcing /usr/share/nvim/runtime/filetype.lua
+027.682  000.058  000.058: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+027.751  000.180  000.122: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+027.763  000.251: inits 3
+029.209  001.446: reading ShaDa
+322287.716  013.726  013.726: require('vim.filetype')
+322293.169  003.372  003.372: require('vim.filetype.detect')
+322293.413  322247.107: reading stdin
+322293.739  000.326: --- NVIM STARTED ---
+
+--- Startup times for process: Primary (or UI client) ---
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.000  000.000: --- NVIM STARTING ---
+000.220  000.219: event init
+000.334  000.114: early init
+000.399  000.065: locale set
+000.460  000.061: init first window
+001.101  000.640: inits 1
+001.127  000.027: window checked
+001.136  000.009: parsing arguments
+001.937  000.060  000.060: require('vim.shared')
+002.065  000.052  000.052: require('vim.inspect')
+002.132  000.055  000.055: require('vim._options')
+002.135  000.190  000.083: require('vim._editor')
+002.136  000.290  000.040: require('vim._init_packages')
+002.138  000.712: init lua interpreter
+002.193  000.055: expanding arguments
+002.225  000.032: inits 2
+002.552  000.327: init highlight
+002.572  000.020: clear screen
+002.766  000.013  000.013: require('vim.keymap')
+003.917  000.297  000.297: sourcing nvim_exec2()
+004.127  001.552  001.243: require('vim._defaults')
+004.130  000.006: init default mappings & autocommands
+004.600  000.055  000.055: sourcing /usr/share/nvim/runtime/ftplugin.vim
+004.705  000.059  000.059: sourcing /usr/share/nvim/runtime/indent.vim
+004.883  000.108  000.108: sourcing /usr/share/nvim/archlinux.lua
+004.890  000.146  000.038: sourcing /etc/xdg/nvim/sysinit.vim
+005.407  000.464  000.464: require('core.neovide_config')
+005.784  000.372  000.372: require('core.basic')
+008.011  002.223  002.223: require('core.keymap')
+008.219  000.201  000.201: require('core.ime')
+008.958  000.580  000.580: require('lazy')
+009.008  000.027  000.027: require('ffi')
+009.097  000.041  000.041: require('vim.fs')
+009.254  000.153  000.153: require('vim.uri')
+009.276  000.263  000.070: require('vim.loader')
+009.476  000.174  000.174: require('lazy.stats')
+009.703  000.199  000.199: require('lazy.core.util')
+009.935  000.228  000.228: require('lazy.core.config')
+010.283  000.158  000.158: require('lazy.core.handler')
+011.066  000.094  000.094: require('lazy.pkg')
+011.082  000.428  000.334: require('lazy.core.meta')
+011.097  000.808  000.381: require('lazy.core.plugin')
+011.111  001.173  000.207: require('lazy.core.loader')
+012.075  000.076  000.076: require('lazy.async')
+012.467  000.215  000.215: require('lazy.manage.process')
+012.550  000.078  000.078: require('lazy.terminal')
+012.560  000.477  000.184: require('lazy.manage.task')
+012.563  000.695  000.141: require('lazy.manage.runner')
+012.568  000.914  000.219: require('lazy.manage')
+012.572  001.010  000.096: require('lazy.view.commands')
+012.691  000.083  000.083: require('lazy.core.fragments')
+018.341  000.127  000.127: require('lazy.core.handler.event')
+018.350  000.241  000.114: require('lazy.core.handler.ft')
+018.419  000.064  000.064: require('lazy.core.handler.keys')
+018.626  000.129  000.129: require('lazy.core.handler.cmd')
+018.996  000.010  000.010: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+019.017  000.002  000.002: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.379  000.189  000.189: sourcing nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0
+020.385  000.274  000.085: sourcing /usr/share/nvim/runtime/filetype.lua
+020.390  000.319  000.045: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.495  000.003  000.003: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.507  000.002  000.002: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+020.974  000.093  000.093: require('tokyonight.config')
+020.980  000.461  000.368: require('tokyonight')
+022.259  000.066  000.066: require('tokyonight.theme')
+023.149  000.100  000.100: require('tokyonight.util')
+023.158  000.215  000.115: require('tokyonight.colors')
+023.587  000.073  000.073: require('tokyonight.hsluv')
+023.915  000.113  000.113: require('tokyonight.groups')
+025.515  003.409  002.942: sourcing /home/chou/.local/share/nvim/lazy/tokyonight.nvim/colors/tokyonight.lua
+025.532  004.499  001.089: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+025.894  000.080  000.080: sourcing /usr/share/nvim/runtime/plugin/editorconfig.lua
+025.901  000.124  000.044: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.101  000.168  000.168: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+026.106  000.197  000.029: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.219  000.077  000.077: sourcing /usr/share/nvim/runtime/plugin/man.lua
+026.225  000.105  000.028: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.714  000.214  000.214: sourcing /usr/share/nvim/runtime/pack/dist/opt/matchit/plugin/matchit.vim
+026.739  000.484  000.270: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+026.743  000.511  000.027: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+026.965  000.136  000.136: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+026.970  000.167  000.031: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.029  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+027.036  000.043  000.031: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.159  000.088  000.088: sourcing /usr/share/nvim/runtime/plugin/osc52.lua
+027.165  000.116  000.028: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.388  000.190  000.190: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+027.395  000.223  000.033: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.527  000.095  000.095: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+027.532  000.127  000.032: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.594  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+027.598  000.060  000.040: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.738  000.104  000.104: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+027.743  000.136  000.032: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.848  000.065  000.065: sourcing /usr/share/nvim/runtime/plugin/tohtml.lua
+027.853  000.104  000.039: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+027.908  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+027.912  000.054  000.033: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+028.083  000.136  000.136: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+028.088  000.168  000.031: sourcing nvim_exec2() called at /home/chou/.config/nvim/init.lua:0
+028.187  019.963  008.362: require('core.lazy')
+028.191  023.267  000.044: sourcing /home/chou/.config/nvim/init.lua
+028.199  000.542: sourcing vimrc file(s)
+028.439  000.045  000.045: sourcing /usr/share/nvim/runtime/filetype.lua
+028.607  000.057  000.057: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+028.688  000.194  000.137: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+028.704  000.267: inits 3
+030.145  001.441: reading ShaDa
+396339.411  012.088  012.088: require('vim.filetype')
+396347.014  005.139  005.139: require('vim.filetype.detect')
+396347.309  396299.937: reading stdin
+396348.398  001.089: --- NVIM STARTED ---
+

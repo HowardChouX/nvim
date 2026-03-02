@@ -2,7 +2,6 @@
 ---@diagnostic disable: undefined-global
 return {
     "nvim-treesitter/nvim-treesitter",
-    main = "nvim-treesitter.configs",
     event = "VeryLazy",
     --event = {"BufReadPost","BufNewFile"},
     build = ":TSUpdate",

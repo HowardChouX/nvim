@@ -17,7 +17,7 @@ return {
 			shutdown_delay = 5 * 60 * 1000, -- 5分钟后自动关闭不活动的服务器
 			-- 退出 Neovim 时立即关闭所有服务器
 			shutdown_on_exit = true,
-			use_bundled_binary = true,
+			use_bundled_binary = false,
 			mcp_request_timeout = 60000,
 			global_env = {},
 
