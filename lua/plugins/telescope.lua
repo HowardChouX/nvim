@@ -20,7 +20,13 @@ return {
             extensions = {
                 ["ui-select"] = {
                     -- 可以选择一个主题，例如 'dropdown' 或 'cursor'
-                    -- require("telescope.themes").get_dropdown {}
+                    require("telescope.themes").get_dropdown {
+                        -- 具体的主题配置项
+                        layout_strategy = "center",
+                        layout_config = {
+                            mirror = true,
+                        },
+                    }
                     -- 或者使用默认主题，不配置则为默认
                 }
             }
