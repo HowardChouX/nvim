@@ -27,6 +27,7 @@ return {
 				"lua_ls",
 				"pyright",
 				"clangd",
+				-- 注意: racket_langserver 需要通过 raco pkg install 安装，不能通过 Mason
 			},
 			automatic_enable = true
 		})
