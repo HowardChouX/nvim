@@ -20,7 +20,6 @@ return {
         ) or "make",
         version = false,
         dependencies = {
-            "yetone/mcphub.nvim",
             "nvim-lua/plenary.nvim",
             "MunifTanjim/nui.nvim",
             "nvim-telescope/telescope.nvim",
@@ -41,7 +40,7 @@ return {
                         __inherited_from = "openai",
                         endpoint = "https://open.cherryin.ai/v1",
                         api_key_name = "CherryIn_API_KEY",
-                        model = "z-ai/glm-4.6(free)",
+                        model = "qwen/qwen3.5-35b-a3b(free)",
                     },
                     SiliconFlow = {
                         __inherited_from = "openai",
