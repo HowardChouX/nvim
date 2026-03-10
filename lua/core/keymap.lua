@@ -277,7 +277,7 @@ end, { desc = "格式化代码 (Format Code) --插件(None-ls)" })
 -- ToggleTerm 插件快捷键
 vim.keymap.set(
 	"t",
-	"jk",
+	"jj",
 	[[<C-\><C-n>]],
 	{ noremap = true, silent = true, desc = "退出终端插入模式 (Exit Term Insert) --插件(ToggleTerm)" }
 )

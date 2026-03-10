@@ -2,7 +2,7 @@
 ---@diagnostic disable: undefined-global
 return {
     "smoka7/hop.nvim",
-    event = "InsertEnter",
+    event = "VeryLazy",
     opts = {
         hint_position = 3
     },

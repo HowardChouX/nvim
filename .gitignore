@@ -1,1 +1,11 @@
+# Dependencies
 node_modules/
+
+# Generated files (no package.json exists)
+package-lock.json
+
+# MCP Hub local state
+.mcphub/
+
+# Claude Code local settings (may contain sensitive permissions)
+lua/plugins/.claude/

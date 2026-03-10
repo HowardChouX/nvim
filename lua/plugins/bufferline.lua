@@ -25,14 +25,6 @@ return {
                 end
                 return indicator
             end,
-            offsets = {
-                {
-                    filetype = "NvimTree",
-                    text = "File Explorer",
-                    text_align = "left",
-                    separator = true,
-                },
-            },
         }
     },
 

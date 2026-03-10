@@ -6,7 +6,6 @@ return {
 	dependencies = {
 		"nvim-treesitter/nvim-treesitter",
 		"nvim-tree/nvim-web-devicons",
-		"hrsh7th/nvim-cmp",
 	},
 	ft = { "markdown", "codecompanion" },
 	config = function()

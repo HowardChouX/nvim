@@ -47,7 +47,7 @@ return {
 					winbar = { "DressingSelect", "snacks_terminal" },
 				},
 			},
-			extensions = { "nvim-tree" },
+			extensions = {},
 			sections = {
 				lualine_a = { "mode" },
 				lualine_b = { "branch", "diff", "diagnostics" },
