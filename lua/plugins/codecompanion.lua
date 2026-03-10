@@ -357,6 +357,19 @@ return {
 		},
 	},
 
+	-- ===== 快捷键配置 =====
+	keys = {
+		-- Action Palette (j + <tab>)
+		{ "j", function()
+			local char = vim.fn.nr2char(vim.fn.getchar())
+			if char == "\t" then
+				vim.cmd("CodeCompanionActions")
+			else
+				vim.api.nvim_feedkeys("j" .. char, "n", false)
+			end
+		end, mode = { "n", "v" }, desc = "CodeCompanion Actions (j+tab)" },
+	},
+
 	-- ===== 回调函数配置 (通过 autocmd 注册) =====
 	init = function()
 		-- Token 限制检查回调
