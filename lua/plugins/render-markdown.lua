@@ -14,7 +14,7 @@ return {
 			enabled = true,
 			render_modes = { "n", "c", "t" },
 			debounce = 100,
-			file_types = { "markdown" },
+			file_types = { "markdown", "codecompanion" },
 			max_file_size = 10.0,
 
 			-- ===== 标题渲染 =====

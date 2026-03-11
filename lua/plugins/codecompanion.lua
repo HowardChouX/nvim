@@ -1,13 +1,11 @@
--- CodeCompanion.nvim - AI 编程助手
--- https://github.com/olimorris/codecompanion.nvim
+-- CodeCompanion.nvim - AI 编程助手 https://github.com/olimorris/codecompanion.nvim
 ---@diagnostic disable: undefined-global
 return {
 	"olimorris/codecompanion.nvim",
-	version = "^19.0.0",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
-		"ravitemer/mcphub.nvim", -- MCP 服务器集成扩展
+		"ravitemer/mcphub.nvim",
 	},
 	-- ===== 快捷键配置 =====
 	keys = {
@@ -17,6 +15,20 @@ return {
 			"<cmd>CodeCompanionActions<cr>",
 			mode = { "n", "v" },
 			desc = "CodeCompanion Actions",
+		},
+		-- Toggle Chat (<LocalLeader>a)
+		{
+			"<leader>a",
+			"<cmd>CodeCompanionChat Toggle<cr>",
+			mode = { "n", "v" },
+			desc = "CodeCompanion Chat Toggle",
+		},
+		-- Add selection to chat (visual mode)
+		{
+			"ga",
+			"<cmd>CodeCompanionChat Add<cr>",
+			mode = "v",
+			desc = "CodeCompanion Chat Add Selection",
 		},
 	},
 	opts = {
@@ -80,7 +92,9 @@ return {
 			},
 			-- 默认自动启动的服务器
 			opts = {
-				default_servers = { "sequential-thinking", "filesystem", "memory" },
+				default_servers = {},
+				acp_enabled = true, -- 启用 ACP 适配器的 MCP 支持
+				timeout = 30e3, -- MCP 服务器响应超时 (毫秒)
 			},
 		},
 
@@ -90,11 +104,11 @@ return {
 				width = 95,
 				height = 10,
 				prompt = "Prompt ",
-				provider = "default",
+				provider = "telescope",
 				opts = {
 					show_preset_actions = true,
 					show_preset_prompts = true,
-					show_prompt_library_builtins = true, -- 显示内置提示
+					show_preset_rules = true, -- 显示预设规则
 					title = "CodeCompanion actions",
 				},
 			},
@@ -116,7 +130,7 @@ return {
 				intro_message = "欢迎使用 CodeCompanion ✨！按 ? 查看选项",
 				separator = "─", -- 消息之间的分隔符
 				show_context = true, -- 显示上下文内容
-				show_header_separator = false, -- 不显示标题分隔符（使用外部 markdown 插件时建议关闭）
+				show_header_separator = true, -- 不显示标题分隔符
 				show_settings = false, -- 不在顶部显示 LLM 设置
 				show_token_count = true, -- 显示每个响应的 token 数
 				show_tools_processing = true, -- 显示工具执行的加载消息
@@ -133,6 +147,8 @@ return {
 					tool_success = "  ",
 				},
 				window = {
+					layout = "vertical", -- float|vertical|horizontal|tab|buffer
+					full_height = true, -- 垂直布局时使用全高
 					width = 0.4,
 					height = 0.9,
 					relative = "editor",
@@ -142,126 +158,396 @@ return {
 						signcolumn = "no",
 						cursorline = true,
 						winbar = "",
+						breakindent = true, -- 长段落换行
+						linebreak = true,
+						wrap = true,
 					},
 				},
 			},
+			-- 浮动窗口配置
+			floating_window = {
+				width = 0.9,
+				height = 0.8,
+				border = "single",
+				relative = "editor",
+				opts = {},
+			},
 			-- 内联助手布局配置
 			inline = {
-				layout = "vertical", -- vertical|horizontal|tab|buffer
+				layout = "vertical", -- vertical|horizontal|buffer
 			},
 		},
 
 		-- ===== 交互配置 =====
 		interactions = {
-			chat = {
-				adapter = "anthropic", -- anthropic / claude_code
-				-- 变量配置 (MCP 扩展需要)
-				variables = {},
-				-- 角色名称配置
-				roles = {
-					llm = function(adapter)
-						return " " .. adapter.formatted_name
-					end,
-					user = "me",
+			-- 后台交互配置 (用于异步任务如生成聊天标题)
+			background = {
+				adapter = {
+					name = "anthropic",
+					model = os.getenv("ANTHROPIC_MODEL"),
+				},
+				callbacks = {
+					["on_ready"] = {
+						actions = {
+							"interactions.background.builtin.chat_make_title",
+						},
+						enabled = true,
+					},
 				},
 				opts = {
-					completion_provider = "blink",
+					enabled = true,
 				},
-				-- 编辑器上下文配置 (使用 #buffer 等)
-				editor_context = {
-					["buffer"] = {
-						opts = {
-							default_params = "diff", -- 默认同步缓冲区差异
-						},
-					},
+			},
+			-- 聊天交互配置 (支持 ACP 和 HTTP 适配器切换)
+			chat = {
+				adapter = {
+					name = "claude_code",
+					model = os.getenv("ANTHROPIC_MODEL"),
 				},
-				-- Slash 命令配置 (在聊天中使用 /file 等)
-				slash_commands = {
-					["file"] = {
-						opts = {
-							provider = "telescope", -- 可选: "default", "telescope", "fzf_lua", "mini_pick"
-							contains_code = true,
-						},
-					},
-					["buffer"] = {
-						opts = {
-							provider = "telescope",
-							contains_code = true,
-						},
-					},
-					["help"] = {
-						opts = {
-							provider = "telescope",
-							contains_code = true,
-						},
-					},
+				-- 角色名称配置
+				roles = {
+					---The header name for the LLM's messages
+					---@type string|fun(adapter: CodeCompanion.Adapter): string
+					llm = function(adapter)
+						return "CodeCompanion (" .. adapter.formatted_name .. ")"
+					end,
+
+					---The header name for your messages
+					---@type string
+					user = "Me",
 				},
-				-- 工具配置 (在聊天中使用 @工具名 调用)
+				-- 工具配置
 				tools = {
-					-- 内置工具启用配置
-					["grep_search"] = {
-						---@param adapter CodeCompanion.HTTPAdapter
-						---@return boolean
-						enabled = function(adapter)
-							return vim.fn.executable("rg") == 1
-						end,
-					},
-					-- 安全审批配置: 运行命令需要用户批准
-					["run_command"] = {
-						opts = {
-							allowed_in_yolo_mode = false, -- YOLO 模式下也需要批准
-						},
-					},
-					-- 安全审批配置: 编辑文件需要用户批准
-					["insert_edit_into_file"] = {
-						opts = {
-							allowed_in_yolo_mode = false,
-						},
-					},
-					-- 工具组: 全功能代码助手
+					-- 工具组配置
 					groups = {
-						["full_stack_dev"] = {
-							description = "全栈开发助手 - 可编辑文件、运行命令、搜索代码",
-							system_prompt = "你是一位全栈开发专家，可以编辑文件、运行命令和搜索代码。请谨慎操作，确保在运行危险命令前询问用户。",
+						-- Agent 工具组: 全功能代码助手 (推荐)
+						["agent"] = {
+							description = "Agent - 可运行代码、编辑代码和修改文件",
 							tools = {
+								"ask_questions",
+								"create_file",
+								"delete_file",
+								"file_search",
+								"get_changed_files",
+								"get_diagnostics",
+								"grep_search",
 								"insert_edit_into_file",
 								"read_file",
 								"run_command",
+							},
+							opts = {
+								collapse_tools = true,
+								ignore_system_prompt = true,
+								ignore_tool_system_prompt = true,
+							},
+						},
+						-- 文件操作工具组
+						["files"] = {
+							description = "文件相关操作工具",
+							prompt = "我给你 ${tools} 来帮助你执行文件操作",
+							tools = {
+								"create_file",
+								"delete_file",
+								"file_search",
+								"get_changed_files",
 								"grep_search",
+								"insert_edit_into_file",
+								"read_file",
 							},
 							opts = {
 								collapse_tools = true,
 							},
 						},
 					},
+					-- 内置工具配置
+					["create_file"] = {
+						opts = {
+							require_approval_before = true, -- 创建文件需要批准
+						},
+					},
+					["delete_file"] = {
+						opts = {
+							allowed_in_yolo_mode = false, -- YOLO 模式下也不允许
+							require_approval_before = true,
+						},
+					},
+					["grep_search"] = {
+						enabled = function()
+							return vim.fn.executable("rg") == 1
+						end,
+						opts = {
+							max_results = 100,
+							respect_gitignore = true,
+							require_approval_before = true,
+						},
+					},
+					["insert_edit_into_file"] = {
+						opts = {
+							require_approval_before = {
+								buffer = false, -- 编辑缓冲区不需要批准
+								file = false, -- 编辑文件不需要批准
+							},
+							require_confirmation_after = true, -- 编辑后需要确认
+							file_size_limit_mb = 2, -- 最大文件大小限制
+						},
+					},
+					["read_file"] = {
+						opts = {
+							require_approval_before = true,
+						},
+					},
+					["run_command"] = {
+						opts = {
+							allowed_in_yolo_mode = false,
+							require_approval_before = true,
+							require_cmd_approval = true,
+						},
+					},
+					["web_search"] = {
+						opts = {
+							adapter = "tavily",
+							opts = {
+								search_depth = "advanced",
+								topic = "general",
+								chunks_per_source = 3,
+								max_results = 5,
+							},
+						},
+					},
+					["fetch_webpage"] = {
+						opts = {
+							adapter = "jina",
+						},
+					},
 					-- 全局工具选项
 					opts = {
 						auto_submit_errors = true, -- 自动将错误发送给 LLM
 						auto_submit_success = true, -- 自动将成功输出发送给 LLM
-						default_tools = {}, -- 默认加载的工具 (留空，按需使用 @tool 调用)
+						folds = {
+							enabled = true, -- 折叠工具输出
+							failure_words = { "cancelled", "error", "failed", "incorrect", "invalid", "rejected" },
+						},
+						default_tools = {}, -- 默认加载的工具
+						tool_replacement_message = "the ${tool} tool",
 					},
 				},
-			},
-			inline = {
-				-- HTTP 适配器配置 (inline 仅支持 HTTP 适配器)
-				adapter = "anthropic",
-				-- 内联助手快捷键 (配置在 keymap.lua)
-				keymaps = vim.g.codecompanion_inline_keymaps,
-			},
-			-- 后台回调配置 (用于异步任务如生成聊天标题)
-			background = {
-				adapter = "anthropic",
-				chat = {
-					callbacks = {
-						["on_ready"] = {
-							actions = {
-								"interactions.background.builtin.chat_make_title",
-							},
-							enabled = true,
+				-- 编辑器上下文配置 (使用 #buffer 等)
+				editor_context = {
+					["buffer"] = {
+						opts = {
+							contains_code = true,
+							default_params = "diff", -- 默认同步缓冲区差异
+						},
+					},
+					["buffers"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+					["diagnostics"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+					["diff"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+					["selection"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+					["viewport"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+				},
+				-- Slash 命令配置
+				slash_commands = {
+					["buffer"] = {
+						opts = {
+							contains_code = true,
+							default_params = "diff",
+							provider = "telescope",
+						},
+					},
+					["fetch"] = {
+						opts = {
+							adapter = "jina",
+							cache_path = vim.fn.stdpath("data") .. "/codecompanion/urls",
+							provider = "telescope",
+						},
+					},
+					["file"] = {
+						opts = {
+							contains_code = true,
+							max_lines = 1000,
+							provider = "telescope",
+						},
+					},
+					["help"] = {
+						opts = {
+							contains_code = false,
+							max_lines = 128,
+							provider = "telescope",
+						},
+					},
+					["symbols"] = {
+						opts = {
+							contains_code = true,
+							provider = "telescope",
 						},
 					},
 					opts = {
-						enabled = true,
+						acp = {
+							enabled = true, -- 启用 ACP 命令补全
+						},
+					},
+				},
+				-- 快捷键配置
+				keymaps = {
+					options = {
+						modes = { n = "?" },
+						description = "选项",
+						hide = true,
+					},
+					completion = {
+						modes = { i = "<C-_>" },
+						description = "[Chat] 补全菜单",
+					},
+					send = {
+						modes = {
+							n = { "<CR>", "<C-s>" },
+							i = "<C-s>",
+						},
+						description = "[Request] 发送响应",
+					},
+					regenerate = {
+						modes = { n = "gr" },
+						description = "[Request] 重新生成",
+					},
+					close = {
+						modes = {
+							n = "<C-c>",
+							i = "<C-c>",
+						},
+						description = "[Chat] 关闭",
+					},
+					stop = {
+						modes = { n = "q" },
+						description = "[Request] 停止",
+					},
+					clear = {
+						modes = { n = "gx" },
+						description = "[Chat] 清空",
+					},
+					codeblock = {
+						modes = { n = "gc" },
+						description = "[Chat] 插入代码块",
+					},
+					yank_code = {
+						modes = { n = "gy" },
+						description = "[Chat] 复制代码",
+					},
+					buffer_sync_all = {
+						modes = { n = "gba" },
+						description = "[Chat] 切换缓冲区同步",
+					},
+					buffer_sync_diff = {
+						modes = { n = "gbd" },
+						description = "[Chat] 切换缓冲区差异同步",
+					},
+					next_chat = {
+						modes = { n = "}" },
+						description = "[Nav] 下一个聊天",
+					},
+					previous_chat = {
+						modes = { n = "{" },
+						description = "[Nav] 上一个聊天",
+					},
+					next_header = {
+						modes = { n = "]]" },
+						description = "[Nav] 下一个标题",
+					},
+					previous_header = {
+						modes = { n = "[[" },
+						description = "[Nav] 上一个标题",
+					},
+					change_adapter = {
+						modes = { n = "ga" },
+						description = "[Adapter] 更改适配器和模型",
+					},
+					fold_code = {
+						modes = { n = "gf" },
+						description = "[Chat] 折叠代码",
+					},
+					debug = {
+						modes = { n = "gd" },
+						description = "[Chat] 查看调试信息",
+					},
+					system_prompt = {
+						modes = { n = "gs" },
+						description = "[Chat] 切换系统提示",
+					},
+					rules = {
+						modes = { n = "gM" },
+						description = "[Chat] 清除规则",
+					},
+					clear_approvals = {
+						modes = { n = "gtx" },
+						description = "[Tools] 清除批准",
+					},
+					yolo_mode = {
+						modes = { n = "gty" },
+						description = "[Tools] 切换 YOLO 模式",
+					},
+					goto_file_under_cursor = {
+						modes = { n = "gR" },
+						description = "[Chat] 打开光标下的文件",
+					},
+				},
+				-- 聊天选项
+				opts = {
+					completion_provider = "blink",
+					debounce = 150, -- 输入防抖 (毫秒)
+					register = "+", -- 复制代码使用的寄存器
+					wait_timeout = 2e6, -- 等待用户响应超时 (毫秒)
+					yank_jump_delay_ms = 400, -- 复制代码后跳转延迟
+					acp_timeout_response = "reject_once", -- ACP 权限请求超时响应
+					blank_prompt = "", -- 空提示时的默认提示
+				},
+			},
+			-- 内联交互配置
+			inline = {
+				adapter = {
+					name = "anthropic",
+					model = os.getenv("ANTHROPIC_MODEL"),
+				},
+				keymaps = {
+					stop = {
+						callback = "keymaps.stop",
+						description = "停止请求",
+						modes = { n = "q" },
+					},
+				},
+				editor_context = {
+					["buffer"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+					["chat"] = {
+						opts = {
+							contains_code = true,
+						},
+					},
+					["clipboard"] = {
+						opts = {
+							contains_code = true,
+						},
 					},
 				},
 			},
@@ -272,18 +558,64 @@ return {
 					model = os.getenv("ANTHROPIC_MODEL"),
 				},
 			},
+			-- 共享快捷键配置
+			shared = {
+				keymaps = {
+					always_accept = {
+						callback = "keymaps.always_accept",
+						description = "始终接受此缓冲区的更改",
+						modes = { n = "g1" },
+						opts = { nowait = true },
+					},
+					accept_change = {
+						callback = "keymaps.accept_change",
+						description = "接受更改",
+						modes = { n = "g2" },
+						opts = { nowait = true, noremap = true },
+					},
+					reject_change = {
+						callback = "keymaps.reject_change",
+						description = "拒绝更改",
+						modes = { n = "g3" },
+						opts = { nowait = true, noremap = true },
+					},
+					next_hunk = {
+						callback = "keymaps.next_hunk",
+						description = "转到下一个 hunk",
+						modes = { n = "}" },
+					},
+					previous_hunk = {
+						callback = "keymaps.previous_hunk",
+						description = "转到上一个 hunk",
+						modes = { n = "{" },
+					},
+				},
+			},
+		},
+
+		-- ===== mcphub 扩展配置 =====
+		-- https://github.com/ravitemer/mcphub.nvim
+		extensions = {
+			mcphub = {
+				callback = "mcphub.extensions.codecompanion",
+				opts = {
+					make_vars = false, -- 禁用变量生成 (因 API 已废弃)
+					make_slash_commands = true,
+					show_result_in_chat = true,
+				},
+			},
 		},
 
 		-- ===== 规则配置 =====
 		rules = {
-			-- 默认规则组 (常用规则文件)
 			default = {
 				description = "通用规则文件集合",
 				files = {
+					".clinerules",
 					".cursorrules",
+					".goosehints",
 					".rules",
 					".windsurfrules",
-					".github/copilot-instructions.md",
 					"AGENT.md",
 					"AGENTS.md",
 					{ path = "CLAUDE.md", parser = "claude" },
@@ -292,35 +624,29 @@ return {
 				},
 				is_preset = true,
 			},
-			-- Claude Code 专用规则组
-			claude = {
-				description = "Claude Code 规则",
-				parser = "claude",
-				files = {
-					"CLAUDE.md",
-					"CLAUDE.local.md",
-					"~/.claude/CLAUDE.md",
-				},
-			},
 			opts = {
 				chat = {
 					autoload = "default", -- 自动加载默认规则组
 					enabled = true,
+					default_params = "diff",
 				},
+				show_presets = true, -- 显示预设规则文件
 			},
 		},
 
 		-- ===== 适配器配置 =====
 		adapters = {
-			-- HTTP 适配器 (OpenAI 兼容格式，用于 inline/cmd/background)
 			http = {
 				anthropic = function()
 					local base_url = os.getenv("ANTHROPIC_BASE_URL")
 					local api_key = os.getenv("ANTHROPIC_API_KEY")
-					local model = os.getenv("ANTHROPIC_MODEL") or "claude-sonnet-4-6"
+					local model = os.getenv("ANTHROPIC_MODEL")
 
 					if not base_url or not api_key then
-						vim.notify("CodeCompanion: 请设置 ANTHROPIC_BASE_URL 和 ANTHROPIC_API_KEY 环境变量", vim.log.levels.ERROR)
+						vim.notify(
+							"CodeCompanion: 请设置 ANTHROPIC_BASE_URL 和 ANTHROPIC_API_KEY 环境变量",
+							vim.log.levels.ERROR
+						)
 						return nil
 					end
 
@@ -332,62 +658,49 @@ return {
 						schema = {
 							model = { default = model },
 						},
-						-- HTTP 适配器可用的工具
-						available_tools = {
-							["run_command"] = { enabled = true },
-							["insert_edit_into_file"] = { enabled = true },
-							["read_file"] = { enabled = true },
-							["grep_search"] = { enabled = true },
-							["full_stack_dev"] = { enabled = true },
+						opts = {
+							allow_insecure = false,
+							cache_models_for = 1800, -- 缓存适配器模型 (秒)
+							show_presets = false,
+							show_model_choices = true,
 						},
 					})
 				end,
-				opts = {
-					show_presets = false,
-					show_model_choices = true,
-				},
 			},
-
-			-- ACP 适配器 (支持原生 Claude 工具)
 			acp = {
 				claude_code = function()
 					return require("codecompanion.adapters").extend("claude_code", {
-						env = {
-							ANTHROPIC_API_KEY = "ANTHROPIC_API_KEY",
-						},
 						defaults = {
-							model = os.getenv("ANTHROPIC_MODEL") or "claude-sonnet-4-6",
+							model = os.getenv("ANTHROPIC_MODEL"),
 							mcpServers = "inherit_from_config",
 						},
-						available_tools = {
-							["run_command"] = { enabled = true },
-							["insert_edit_into_file"] = { enabled = true },
-							["read_file"] = { enabled = true },
-							["grep_search"] = { enabled = true },
-							["full_stack_dev"] = { enabled = true },
+						opts = {
+							show_presets = false,
 						},
 					})
 				end,
 			},
 		},
 
-		-- ===== 扩展配置 =====
-		extensions = {
-			mcphub = {
-				callback = "mcphub.extensions.codecompanion",
-				opts = {
-					make_vars = true, -- 创建 MCP 变量
-					make_slash_commands = true, -- 创建 MCP slash 命令
-					show_result_in_chat = true, -- 在聊天中显示结果
-					-- 与原生 MCP 配置协同工作
-					-- mcphub 管理外部 MCP 服务器，原生 mcp.servers 管理内置服务器
-				},
+		-- ===== 通用选项 =====
+		opts = {
+			log_level = "ERROR", -- TRACE|DEBUG|ERROR|INFO
+			language = "English", -- LLM 响应使用的语言
+			send_code = true, -- 是否发送代码到 LLM
+			submit_delay = 500, -- 自动提交聊天缓冲区前的延迟 (毫秒)
+			per_project_config = {
+				enabled = true, -- 启用项目级配置
+				files = {}, -- 项目配置文件列表
+				paths = {}, -- 按路径配置
 			},
 		},
 	},
 
-	-- ===== 回调函数配置 (通过 autocmd 注册) =====
+	-- ===== 回调函数配置 =====
 	init = function()
+		-- 命令缩写: cc -> CodeCompanion
+		vim.cmd([[cab cc CodeCompanion]])
+
 		-- Token 限制检查回调
 		vim.api.nvim_create_autocmd("User", {
 			pattern = "CodeCompanionChatCreated",

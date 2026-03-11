@@ -42,6 +42,7 @@ return {
 				theme = "auto",
 				component_separators = { left = "", right = "" },
 				section_separators = { left = "", right = "" },
+				globalstatus = true, -- 使用全局状态栏，减少高度
 				disabled_filetypes = {
 					statusline = { "DressingSelect", "snacks_terminal" },
 					winbar = { "DressingSelect", "snacks_terminal" },
