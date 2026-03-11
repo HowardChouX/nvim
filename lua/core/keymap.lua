@@ -55,8 +55,8 @@ vim.keymap.set(
 --  窗口与终端 (Window & Terminal Management)
 --------------------------------------------------------------------------------
 
--- Normal 模式下：<C-t> 打开 toggleterm 终端 (已配置在 toggleterm.lua 中)
--- 快捷键 <C-t> 已由 toggleterm.nvim 插件接管，用于打开/关闭终端
+-- Normal 模式下：<C-t> 打开 snacks 终端 (已配置在 snacks.lua 中)
+-- 快捷键 <C-t> 已由 snacks.nvim 插件接管，用于打开/关闭终端
 
 -- Terminal 模式下：jj 切换到 Normal 模式 (退出终端插入模式)
 vim.keymap.set(
@@ -274,12 +274,12 @@ vim.keymap.set("n", "<leader>f", function()
 	vim.lsp.buf.format()
 end, { desc = "格式化代码 (Format Code) --插件(None-ls)" })
 
--- ToggleTerm 插件快捷键
+-- Snacks Terminal 插件快捷键
 vim.keymap.set(
 	"t",
 	"jj",
 	[[<C-\><C-n>]],
-	{ noremap = true, silent = true, desc = "退出终端插入模式 (Exit Term Insert) --插件(ToggleTerm)" }
+	{ noremap = true, silent = true, desc = "退出终端插入模式 (Exit Term Insert) --插件(Snacks)" }
 )
 vim.keymap.set("t", "<Esc>", function()
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
@@ -288,5 +288,5 @@ vim.keymap.set("t", "<Esc>", function()
 			vim.cmd("bd!")
 		end
 	end, 20)
-end, { noremap = true, silent = true, desc = "关闭终端 (Close Terminal) --插件(ToggleTerm)" })
+end, { noremap = true, silent = true, desc = "关闭终端 (Close Terminal) --插件(Snacks)" })
 

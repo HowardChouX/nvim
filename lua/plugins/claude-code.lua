@@ -12,7 +12,7 @@ return {
 	},
 	{
 		"coder/claudecode.nvim",
-		dependencies = { "akinsho/toggleterm.nvim" },
+		dependencies = { "folke/snacks.nvim" },
 		cmd = {
 			"ClaudeCode",
 			"ClaudeCodeFocus",

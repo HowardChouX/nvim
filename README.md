@@ -43,7 +43,7 @@
 │      ├─ nvim-treesitter.lua # 语法高亮和查询
 │      ├─ render-markdown.lua # Markdown 渲染
 │      ├─ telescope.lua     # 模糊查找器
-│      ├─ toggleterm.lua    # 终端管理
+│      ├─ snacks.lua       # 终端管理 (Snacks)
 │      └─ tokyonight.lua    # Tokyo Night 主题
 └─ AGENTS.md               # 未来维护者的交接文档
 ```
@@ -88,7 +88,7 @@
 | `indent-blankline.nvim` | 缩进指南 | - |
 | `nvim-autopairs` | 自动括号配对 | - |
 | `vim-visual-multi` | 多光标编辑 | - |
-| `toggleterm.nvim` | 终端管理 | - |
+| `snacks.nvim` | 终端管理 | - |
 | `noice.nvim` | 现代化通知和命令行界面 | `nui.nvim`, `nvim-notify` |
 | `nvim-notify` | 美观的通知系统 | - |
 | `tokyonight.nvim` | Tokyo Night 主题 | - |
@@ -106,7 +106,7 @@ mcphub.nvim, noice.nvim, none-ls.nvim, nui.nvim,
 nvim-autopairs, nvim-cmp, nvim-lspconfig, nvim-notify,
 nvim-surround, nvim-tree.lua, nvim-treesitter, nvim-web-devicons,
 plenary.nvim, render-markdown.nvim, snacks.nvim,
-telescope-ui-select.nvim, telescope.nvim, toggleterm.nvim,
+telescope-ui-select.nvim, telescope.nvim, snacks.nvim,
 tokyonight.nvim, vim-visual-multi, LuaSnip
 ```
 
@@ -428,8 +428,8 @@ vim.lsp.config("lua_ls", {
 - **Git 状态显示**：内置 Git 状态信息
 
 ### Shell 集成
-- **内置终端支持**：ToggleTerm 提供便捷的终端访问
-- **快捷键快速打开**：Ctrl+T 快速打开底部终端
+- **内置终端支持**：Snacks.nvim 提供便捷的终端访问
+- **快捷键快速打开**：Ctrl+T 快速打开浮动终端
 
 ---
 
