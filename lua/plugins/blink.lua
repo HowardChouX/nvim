@@ -23,16 +23,16 @@ return {
         Text = "󰉿",
         Method = "󰆧",
         Function = "󰊕",
-        Constructor = "",
+        Constructor = "󰐩",
         Field = "󰇽",
         Variable = "󰂡",
         Class = "󰠱",
-        Interface = "",
+        Interface = "󰡱",
         Module = "󰏗",
         Property = "󰜢",
         Unit = "󰑭",
         Value = "󰎠",
-        Enum = "",
+        Enum = "󰒻",
         Keyword = "󰌋",
         Snippet = "󰃐",
         Color = "󰏘",
@@ -42,7 +42,7 @@ return {
         EnumMember = "󰕳",
         Constant = "󰏿",
         Struct = "󰙅",
-        Event = "",
+        Event = "󱐋",
         Operator = "󰆕",
         TypeParameter = "󰅲",
       },
@@ -134,8 +134,8 @@ return {
 
     -- 键位映射
     keymap = {
-      preset = "enter",
-      ["<C-y>"] = { "select_and_accept" },
+      preset = "default",  -- Enter 只换行，不触发补全
+      ["<C-y>"] = { "select_and_accept" },  -- Ctrl+Y 接受补全
       ["<Tab>"] = { "select_next", "fallback" },
       ["<S-Tab>"] = { "select_prev", "fallback" },
     },

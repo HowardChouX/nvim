@@ -54,6 +54,17 @@ return {
 				lualine_b = { "branch", "diff", "diagnostics" },
 				lualine_c = { "filename" },
 				lualine_x = {
+					-- CodeCompanion Spinner: 在 AI 思考时显示动画
+					function()
+						local ok_lualine_spinner, lualine_spinner = pcall(require, "codecompanion._extensions.spinner.styles.lualine")
+						if ok_lualine_spinner then
+							local component = lualine_spinner.get_lualine_component()
+							if component[1] then
+								return component[1]()
+							end
+						end
+						return ""
+					end,
 					lsp_status_short,
 					lsp_diagnostics,
 					"filesize",
@@ -75,6 +86,12 @@ return {
 	end,
 	config = function(_, opts)
 		require("lualine").setup(opts)
+
+		-- 初始化 CodeCompanion Lualine Spinner
+		local ok_lualine_spinner, lualine_spinner = pcall(require, "codecompanion._extensions.spinner.styles.lualine")
+		if ok_lualine_spinner then
+			lualine_spinner.setup()
+		end
 
 		vim.api.nvim_create_augroup("LualineLSP", { clear = true })
 		vim.api.nvim_create_autocmd("LspAttach", {
