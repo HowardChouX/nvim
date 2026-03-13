@@ -23,7 +23,6 @@ return {
 				Text = "󰉿",
 				Method = "󰆧",
 				Function = "󰊕",
-
 				Constructor = "󰐩",
 				Field = "󰇽",
 				Variable = "󰂡",
