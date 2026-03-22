@@ -140,7 +140,7 @@ return {
 				"snippet_forward",
 				"fallback",
 			}, -- Tab 接受补全或前进 snippet，否则插入制表符
-			["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" }, -- Shift + Tab 上一个补全项或后退 snippet
+			["<S-Tab>"] = { "select_next", "snippet_backward", "fallback" }, -- Shift + Tab 上一个补全项或后退 snippet
 			["<Up>"] = { "select_prev", "fallback" },
 			["<Down>"] = { "select_next", "fallback" },
 		},
