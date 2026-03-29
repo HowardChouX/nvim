@@ -94,7 +94,7 @@ return {
 			},
 			-- 默认自动启动的服务器
 			opts = {
-				default_servers = {},
+				default_servers = {"sequential-thinking", "memory"},
 				acp_enabled = true, -- 启用 ACP 适配器的 MCP 支持
 				timeout = 30e3, -- MCP 服务器响应超时 (毫秒)
 			},
