@@ -27,6 +27,7 @@ return {
 				"lua_ls",
 				"pyright",
 				"clangd",
+				"sqls",
 			},
 			automatic_enable = true
 		})
@@ -49,6 +50,11 @@ return {
 		-- Python LSP配置
 		vim.lsp.config("pyright", {
 			filetypes = { "python" },
+			handlers = {
+				-- 禁用 pyright 的格式化，让 conform 处理
+				["textDocument/formatting"] = nil,
+				["textDocument/rangeFormatting"] = nil,
+			},
 			settings = {
 				python = {
 					analysis = {
@@ -75,6 +81,11 @@ return {
 				"-j=4",
 				"--pch-storage=memory",
 			},
+		})
+
+		-- SQL LSP配置
+		vim.lsp.config("sqls", {
+			filetypes = { "sql", "mysql", "plsql" },
 		})
 
         -- Racket LSP配置 - 修正为正确的配置

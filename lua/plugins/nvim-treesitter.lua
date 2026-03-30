@@ -3,7 +3,6 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
 	event = "VeryLazy",
-	--event = {"BufReadPost","BufNewFile"},
 	build = ":TSUpdate",
 	opts = {
 		ensure_installed = {
@@ -35,7 +34,7 @@ return {
 			additional_vim_regex_highlighting = false,
 		},
 		indent = {
-			enable = true, -- 启用 Treesitter 缩进，提供更精准的缩进体验
+			enable = true,
 		},
 	},
 }

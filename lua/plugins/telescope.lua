@@ -18,8 +18,12 @@ return {
             -- 为 ui-select 扩展配置主题，可选
             extensions = {
                 ["ui-select"] = {
-                    -- 可以选择一个主题，例如 'dropdown' 或 'cursor'
-                    -- 注意：themes 模块需要在 config 中加载
+                    require("telescope.themes").get_dropdown {
+                        layout_strategy = "center",
+                        layout_config = {
+                            mirror = true,
+                        },
+                    }
                 }
             }
         },
@@ -85,18 +89,8 @@ return {
 
             telescope.setup(opts)
 
-            -- !!! 关键步骤：加载 ui-select 扩展 !!!
-            -- 这会使得所有调用 vim.ui.select 的地方都使用 Telescope 界面
-            require("telescope").load_extension("ui-select", {
-                -- 可以选择一个主题，例如 'dropdown' 或 'cursor'
-                require("telescope.themes").get_dropdown {
-                    -- 具体的主题配置项
-                    layout_strategy = "center",
-                    layout_config = {
-                        mirror = true,
-                    },
-                }
-            })
+            -- 加载 ui-select 扩展，使得 vim.ui.select 使用 Telescope 界面
+            require("telescope").load_extension("ui-select")
         end,
     },
 }

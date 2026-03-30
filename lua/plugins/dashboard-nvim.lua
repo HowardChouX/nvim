@@ -36,7 +36,7 @@ return {
 				project = {
 					enable = true,
 					limit = 8,
-					action = "Telescope find_files cwd=",
+					action = "Telescope find_files",
 				},
 				mru = {
 					enable = true,

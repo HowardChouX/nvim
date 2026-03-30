@@ -11,13 +11,9 @@ return {
 			},
 			progress = {
 				enabled = true,
-				format = "lsp_progress",
-				view = "mini",
 			},
 			message = {
 				enabled = true,
-				view = "mini",
-				opts = {},
 			},
 			hover = {
 				enabled = true,
@@ -63,20 +59,6 @@ return {
 				},
 				opts = { skip = true },
 			},
-			{
-				filter = {
-					event = "lsp",
-					kind = "progress",
-				},
-				view = "mini",
-			},
-			{
-				filter = {
-					event = "lsp",
-					kind = "message",
-				},
-				view = "mini",
-			},
 		},
 		presets = {
 			bottom_search = true,
@@ -97,7 +79,7 @@ return {
 				},
 			},
 			mini = {
-				position = { row = -2, col = "100%" },
+				position = { row = -2, col = -1 },
 				timeout = 150,
 				size = { width = 15, height = 1 },
 				border = "none",

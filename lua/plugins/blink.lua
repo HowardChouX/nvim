@@ -3,7 +3,6 @@
 ---@diagnostic disable: undefined-global
 return {
 	"saghen/blink.cmp",
-	version = "*",
 	event = "VeryLazy",
 	dependencies = {
 		"L3MON4D3/LuaSnip",
@@ -132,22 +131,20 @@ return {
 			},
 		},
 
-		-- 键位映射
+		-- 键位映射 - 自定义：Tab 只跳转不 accept
 		keymap = {
-			preset = "default",
-			["<Tab>"] = {
-				"select_and_accept",
-				"snippet_forward",
-				"fallback",
-			}, -- Tab 接受补全或前进 snippet，否则插入制表符
-			["<S-Tab>"] = { "select_next", "snippet_backward", "fallback" }, -- Shift + Tab 上一个补全项或后退 snippet
+			preset = "super-tab",
+			-- 覆盖 Tab：只跳转/选择下一个，不 accept
+			["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+			["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+			["<Enter>"] = { "accept", "fallback" },
 			["<Up>"] = { "select_prev", "fallback" },
 			["<Down>"] = { "select_next", "fallback" },
 		},
 
 		-- Fuzzy 配置
 		fuzzy = {
-			implementation = "rust",
+			implementation = "lua",
 		},
 	},
 }

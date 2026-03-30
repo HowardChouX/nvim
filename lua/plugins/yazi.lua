@@ -13,10 +13,12 @@ return {
 
 	keys = {
 		{ "<leader>e", "<cmd>Yazi<cr>", desc = "打开文件管理器 (Open yazi)" },
-		{ "<leader>e", "<cmd>Yazi cwd<cr>", desc = "在工作目录打开 yazi" },
 	},
 
 	opts = {
 		open_for_directories = true, -- 用 yazi 打开目录（替代 netrw）
+		open_file = {
+			quit_on_open = false,
+		},
 	},
 }

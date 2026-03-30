@@ -2,11 +2,10 @@
 ---@diagnostic disable: undefined-global
 return {
 	"olimorris/codecompanion.nvim",
-    event = "VeryLazy",
+	event = "VeryLazy",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
-		"ravitemer/mcphub.nvim",
 		"lalitmee/codecompanion-spinners.nvim",
 	},
 	-- ===== 快捷键配置 =====
@@ -94,7 +93,7 @@ return {
 			},
 			-- 默认自动启动的服务器
 			opts = {
-				default_servers = {"sequential-thinking", "memory"},
+				default_servers = {},
 				acp_enabled = true, -- 启用 ACP 适配器的 MCP 支持
 				timeout = 30e3, -- MCP 服务器响应超时 (毫秒)
 			},
@@ -645,17 +644,8 @@ return {
 			},
 		},
 
-		-- ===== mcphub 扩展配置 =====
-		-- https://github.com/ravitemer/mcphub.nvim
+		-- ===== 扩展配置 =====
 		extensions = {
-			mcphub = {
-				callback = "mcphub.extensions.codecompanion",
-				opts = {
-					make_vars = false, -- 禁用变量生成 (因 API 已废弃)
-					make_slash_commands = true,
-					show_result_in_chat = true,
-				},
-			},
 			-- ===== Spinner 加载动画配置 =====
 			-- 在状态栏显示 AI 思考动画
 			spinner = {
@@ -760,136 +750,4 @@ return {
 			},
 		},
 	},
-
-	-- ===== 回调函数配置 =====
-	init = function()
-		-- 命令缩写: cc -> CodeCompanion
-		vim.cmd([[cab cc CodeCompanion]])
-
-		-- ===== 自定义动作：加载已保存的聊天历史 =====
-		local codecompanion = require("codecompanion")
-		local config = require("codecompanion.config")
-
-		-- 获取已保存的聊天文件列表
-		local function get_saved_chats()
-			local chat_dir = vim.fn.stdpath("data") .. "/codecompanion/chats/"
-			local files = vim.fn.readdir(chat_dir)
-			local chats = {}
-
-			for _, file in ipairs(files) do
-				if file:match("%.json$") then
-					local filepath = chat_dir .. file
-					local content = vim.fn.readfile(filepath)
-					local ok, data = pcall(vim.fn.json_decode, table.concat(content, "\n"))
-					if ok and data then
-						table.insert(chats, {
-							name = file:gsub("%.json$", ""),
-							description = data.title or data.description or "未命名聊天",
-							created = data.created or "",
-							filepath = filepath,
-						})
-					end
-				end
-			end
-
-			-- 按创建时间排序
-			table.sort(chats, function(a, b)
-				return (a.created or "") > (b.created or "")
-			end)
-
-			return chats
-		end
-
-		-- 添加自定义动作到 CodeCompanion
-		vim.api.nvim_create_autocmd("User", {
-			pattern = "CodeCompanionSetup",
-			callback = function()
-				local actions = require("codecompanion.actions")
-
-				actions.register({
-					name = "Load saved chats ...",
-					interaction = " ",
-					description = "从磁盘加载已保存的聊天历史",
-					picker = {
-						prompt = "选择聊天历史",
-						provider = config.display.action_palette.provider,
-						columns = { "description", "created" },
-						items = function()
-							local saved_chats = get_saved_chats()
-							local items = {}
-
-							if #saved_chats == 0 then
-								table.insert(items, {
-									name = "no_chats",
-									interaction = " ",
-									description = "暂无保存的聊天历史",
-									created = "",
-									callback = function()
-										vim.notify("暂无保存的聊天历史，请先创建并保存一个聊天", vim.log.levels.INFO)
-									end,
-								})
-								return items
-							end
-
-							for _, chat in ipairs(saved_chats) do
-								table.insert(items, {
-									name = chat.name,
-									interaction = "chat",
-									description = chat.description,
-									created = chat.created,
-									callback = function()
-										-- 打开已保存的聊天
-										codecompanion.close_last_chat()
-										vim.cmd("edit " .. chat.filepath)
-										vim.notify("已加载聊天: " .. chat.name, vim.log.levels.INFO)
-									end,
-								})
-							end
-
-							return items
-						end,
-					},
-				})
-			end,
-		})
-
-		-- Token 限制检查回调
-		vim.api.nvim_create_autocmd("User", {
-			pattern = "CodeCompanionChatCreated",
-			callback = function(args)
-				local chat = require("codecompanion").buf_get_chat(args.data.bufnr)
-
-				-- 提交前检查 token 限制
-				chat:add_callback("on_before_submit", function(c, _)
-					local tokens = require("codecompanion.utils.tokens")
-					local token_count = tokens.calculate(vim.inspect(c.messages))
-					local context_limit = 128000
-
-					if token_count > context_limit then
-						vim.notify(
-							string.format("Token 数量 (%d) 超过上下文限制 (%d)", token_count, context_limit),
-							vim.log.levels.WARN
-						)
-						return false
-					end
-				end)
-
-				-- 工具输出截断回调
-				chat:add_callback("on_tool_output", function(_, data)
-					local tokens = require("codecompanion.utils.tokens")
-					local max_tokens = 10000
-
-					if data.for_llm and tokens.calculate(data.for_llm) > max_tokens then
-						local max_chars = max_tokens * 6
-						data.for_llm = data.for_llm:sub(1, max_chars) .. "\n\n[输出已截断]"
-						data.for_user = data.for_llm
-						vim.notify(
-							string.format("工具 '%s' 输出已截断 (~%d tokens)", data.tool, max_tokens),
-							vim.log.levels.WARN
-						)
-					end
-				end)
-			end,
-		})
-	end,
 }
