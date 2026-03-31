@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a Neovim configuration using `lazy.nvim` as the plugin manager. The config targets Neovim 0.11+ and uses Lua throughout.
+This is a Neovim configuration using `lazy.nvim` as the plugin manager. The config targets Neovim 0.11+ and uses Lua throughout. The primary AI assistant is CodeCompanion with full MCP (Model Context Protocol) support.
 
 ## Architecture
 
@@ -17,7 +17,8 @@ This is a Neovim configuration using `lazy.nvim` as the plugin manager. The conf
 │   │   ├── keymap.lua    # All keybindings with Chinese descriptions
 │   │   └── lazy.lua      # lazy.nvim bootstrap and plugin import
 │   └── plugins/          # Individual plugin configs (lazy.nvim spec)
-└── snippets/             # LuaSnip snippets (JSON format)
+├── snippets/             # LuaSnip snippets (JSON format)
+└── plugin/               # Generated plugin directory
 ```
 
 **Plugin Loading Pattern**: Each file in `lua/plugins/` returns a lazy.nvim spec table. The `lazy.lua` imports all plugins via `{ import = "plugins" }`.
@@ -67,6 +68,26 @@ vim.lsp.config("server_name", {
   filetypes = { "lua" },
   settings = { ... },
 })
+```
+
+### MCP (Model Context Protocol) Configuration
+CodeCompanion uses MCP servers for tool integration. MCP servers are configured in `lua/plugins/codecompanion.lua`:
+- **filesystem**: File system operations (restricted to config, home, and cwd directories)
+- **sequential-thinking**: Complex reasoning assistance
+- **memory**: Persistent memory storage
+
+MCP servers use `npx -y @modelcontextprotocol/server-<name>` commands and can be extended with tool overrides.
+
+### Configuration Patterns
+
+**Adding a New Plugin**: Create a new file in `lua/plugins/` that returns a lazy.nvim spec. Most plugins use `opts` for configuration:
+```lua
+---@diagnostic disable: undefined-global
+return {
+  "author/plugin-name",
+  event = "VeryLazy",
+  opts = { /* plugin options */ },
+}
 ```
 
 ### Keymap Binding Rules
@@ -134,7 +155,7 @@ The Telescope keymaps picker filters to show only keymaps with Chinese descripti
 - `clangd` - C/C++
 - `racket_langserver` - Racket
 
-## Pre-configured Formatters (via none-ls)
+## Pre-configured Formatters (via conform.nvim)
 
 - `stylua` - Lua
 - `black` - Python
@@ -158,6 +179,8 @@ The Telescope keymaps picker filters to show only keymaps with Chinese descripti
 | `tt` / `bb` | Page up / down |
 | `<F1>` | Show keymaps (Telescope) |
 | `<F2>` | Rename symbol (Lspsaga) |
+| `<leader>a` | CodeCompanion Chat Toggle |
+| `<leader><tab>` | CodeCompanion Actions |
 
 ## Dependencies
 
