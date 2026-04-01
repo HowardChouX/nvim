@@ -140,12 +140,17 @@ vim.keymap.set("n", "<leader>f", function()
 end, { desc = "格式化代码 (Format Code) --插件(Conform)" })
 
 -- Snacks Terminal 插件快捷键
-vim.keymap.set("t", "jj", function()
-	if vim.bo.filetype == "yazi" then
-		return "<nop>"
-	end
-	return [[<C-\><C-n>]]
-end, { noremap = true, silent = true, desc = "退出终端插入模式 (Exit Term Insert) --插件(Snacks)" })
+vim.keymap.set(
+	"t",
+	"jj",
+	function()
+		if vim.bo.filetype == "yazi" then
+			return vim.NIL
+		end
+		return vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
+	end,
+	{ expr = true, noremap = true, silent = true, desc = "退出终端插入模式 (Exit Term Insert) --插件(Snacks)" }
+)
 
 vim.keymap.set("t", "<Esc>", function()
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
