@@ -63,14 +63,14 @@ vim.keymap.set("n", "<leader>fg", function()
 
 	if has_rg then
 		-- ripgrep 可用，使用 live_grep 进行全局搜索
-		require('telescope.builtin').live_grep()
+		require("telescope.builtin").live_grep()
 	else
 		-- ripgrep 不可用，使用普通的 find_files 替代并发出警告
 		vim.notify(
 			"ripgrep 未安装，使用文件查找替代。推荐安装 ripgrep 以获得更好的搜索体验。",
 			vim.log.levels.WARN
 		)
-		require('telescope.builtin').find_files()
+		require("telescope.builtin").find_files()
 	end
 end, { desc = "全局搜索 (Live Grep) --插件(Telescope)" })
 
@@ -133,59 +133,53 @@ vim.keymap.set("n", "<leader>f", function()
 	require("conform").format({ async = true, lsp_fallback = true })
 end, { desc = "格式化代码 (Format Code) --插件(Conform)" })
 
--- Snacks Terminal 插件快捷键
-vim.keymap.set({ "n", "t" }, "<C-t>", function()
-  local ok, snacks = pcall(require, "snacks")
-  if ok then
-    snacks.terminal.toggle()
-  else
-    vim.notify("Snacks.nvim 插件未加载", vim.log.levels.WARN)
-  end
-end, { desc = "切换终端 (Toggle Terminal) --插件(Snacks)" })
-
-vim.keymap.set("t", "jj", function()
-	if vim.bo.filetype == "yazi" then
-		return vim.NIL
-	end
-	return vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
-end, {
-	expr = true,
-	noremap = true,
-	silent = true,
-	desc = "退出终端插入模式 (Exit Term Insert) --插件(Snacks)",
-})
-
-vim.keymap.set("t", "<Esc>", function()
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
-	vim.defer_fn(function()
-		if vim.bo.buftype == "terminal" then
-			vim.cmd("bd!")
-		end
-	end, 20)
-end, { noremap = true, silent = true, desc = "关闭终端 (Close Terminal) --插件(Snacks)" })
-
 -- Aerial 插件快捷键
 vim.keymap.set("n", "<leader>q", function()
-  local ok, aerial = pcall(require, "aerial")
-  if ok then
-    aerial.toggle()
-    -- 手动切换焦点到aerial窗口
-    local aerial_info = aerial.get_location()
-    if aerial_info and aerial_info.winid then
-      vim.api.nvim_set_current_win(aerial_info.winid)
-    end
-  else
-    vim.notify("aerial.nvim 插件未加载", vim.log.levels.WARN)
-  end
+	local ok, aerial = pcall(require, "aerial")
+	if ok then
+		aerial.toggle()
+		-- 手动切换焦点到aerial窗口
+		local aerial_info = aerial.get_location()
+		if aerial_info and aerial_info.winid then
+			vim.api.nvim_set_current_win(aerial_info.winid)
+		end
+	else
+		vim.notify("aerial.nvim 插件未加载", vim.log.levels.WARN)
+	end
 end, {
 	desc = "打开/关闭大纲 (Toggle Outline) --插件(Aerial)",
 })
 
 -- Yazi 插件快捷键
 vim.keymap.set("n", "<leader>e", "<cmd>Yazi<CR>", {
-  desc = "打开文件管理器 (Open yazi) --插件(Yazi)",
+	desc = "打开文件管理器 (Open yazi) --插件(Yazi)",
 })
 
+-- ToggleTerm 插件快捷键
+vim.keymap.set("n", "<C-t>", ":ToggleTerm<CR>", {
+	desc = "打开/关闭终端 (Toggle Terminal) --插件(ToggleTerm)",
+})
+
+-- Terminal 模式下：jj 切换到 Normal 模式 (退出终端插入模式)
+vim.keymap.set(
+	"t",
+	"jj",
+	[[<C-\><C-n>]],
+	{ noremap = true, silent = true, desc = "终端模式 -> 普通模式 (Terminal -> Normal) --系统" }
+)
+
+-- Terminal 模式下：Esc 切换到 Normal 模式 (退出终端插入模式)
+vim.keymap.set(
+	"t",
+	"<Esc>",
+	[[<C-\><C-n>]],
+	{ noremap = true, silent = true, desc = "终端模式 -> 普通模式 (Terminal -> Normal) --系统" }
+)
+
 -- LSP 跳转到定义 (使用 LSPSaga)
-vim.keymap.set("n", "gd", ":Lspsaga goto_definition<CR>",
-  { silent = true, desc = "跳转到定义 (Go to Definition) --插件(Lspsaga)" })
+vim.keymap.set(
+	"n",
+	"gd",
+	":Lspsaga goto_definition<CR>",
+	{ silent = true, desc = "跳转到定义 (Go to Definition) --插件(Lspsaga)" }
+)
