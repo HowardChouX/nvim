@@ -116,7 +116,7 @@ return {
 				if client then
 					-- 排除不需要通知的 LSP 服务器
 					local excluded_lsp = {
-						"render-markdown",  -- render-markdown LSP
+						"render-markdown", -- render-markdown LSP
 					}
 
 					-- 检查是否在排除列表中
@@ -137,13 +137,20 @@ return {
 			end,
 		})
 
-		-- Mason工具安装器
-		require("mason-tool-installer").setup({
-			ensure_installed = {
-				"stylua",
-				"black",
-				"clang-format",
-			},
-		})
+		-- Mason工具安装器 - 延迟初始化避免循环依赖
+		vim.defer_fn(function()
+			require("mason-tool-installer").setup({
+				ensure_installed = {
+					"stylua",
+					"black",
+					"clang-format",
+					"sql-formatter",
+				},
+				auto_update = true,
+				run_on_start = true,
+			})
+			-- 自动检查并安装缺失的工具
+			require("mason-tool-installer").check_install()
+		end, 1000)
 	end,
 }
