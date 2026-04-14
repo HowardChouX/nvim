@@ -91,7 +91,7 @@ return {
 					name = "snippets",
 					enabled = true,
 					module = "blink.cmp.sources.snippets",
-					score_offset = 10,
+					score_offset = -1,
 				},
 				buffer = {
 					name = "buffer",
