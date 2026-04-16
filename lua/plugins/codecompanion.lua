@@ -22,7 +22,6 @@ return {
 
 	-- 插件加载时机: VeryLazy 表示在需要时延迟加载
 	event = "VeryLazy",
-
 	-- =========================== 依赖插件 ============================
 	dependencies = {
 		"nvim-lua/plenary.nvim", -- Lua 实用函数库，许多插件的基础依赖
