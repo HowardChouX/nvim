@@ -35,6 +35,7 @@ return {
 				"pyright",
 				"clangd",
 				"sqls",
+				"jdtls", -- Java LSP
 			},
 			automatic_enable = true,
 		})
@@ -95,20 +96,46 @@ return {
 			filetypes = { "sql", "mysql", "plsql" },
 		})
 
-		-- Racket LSP配置 - 修正为正确的配置
-		vim.lsp.config("racket_langserver", {
-			filetypes = { "racket", "scheme" },
-			cmd = { "racket", "--lib", "racket-langserver" }, -- 正确的命令 [3]
+		-- Racket LSP配置 - 暂时禁用，存在兼容性问题
+		-- vim.lsp.config("racket_langserver", {
+		-- 	filetypes = { "racket", "scheme" },
+		-- 	cmd = { "racket", "--lib", "racket-langserver" }, -- 正确的命令 [3]
+		-- 	settings = {
+		-- 		racket = {
+		-- 			completion = {
+		-- 				enabled = true,
+		-- 			},
+		-- 		},
+		-- 	},
+		-- })
+		-- -- 显式启用 racket_langserver
+		-- vim.lsp.enable("racket_langserver")
+
+		-- Java LSP配置 (jdtls)
+		vim.lsp.config("jdtls", {
+			filetypes = { "java" },
+			handlers = {
+				-- 禁用 jdtls 的格式化，让 conform 处理
+				["textDocument/formatting"] = nil,
+				["textDocument/rangeFormatting"] = nil,
+			},
 			settings = {
-				racket = {
-					completion = {
-						enabled = true,
+				java = {
+					configuration = {
+						runtimes = {
+							-- 这里可以根据需要添加 JDK 运行时配置
+							-- {
+							-- 	name = "JavaSE-17",
+							-- 	path = "/path/to/jdk-17",
+							-- },
+						},
+					},
+					format = {
+						enabled = false, -- 禁用内置格式化，使用 google-java-format
 					},
 				},
 			},
 		})
-		-- 显式启用 racket_langserver
-		vim.lsp.enable("racket_langserver")
 
 		-- 简化通知系统
 		vim.api.nvim_create_autocmd("LspAttach", {
@@ -146,6 +173,7 @@ return {
 					"black",
 					"clang-format",
 					"sql-formatter",
+					"google-java-format", -- Java 格式化工具
 				},
 				auto_update = true,
 				run_on_start = true,

@@ -9,6 +9,7 @@ return {
 			c = { "clang-format" },
 			cpp = { "clang-format" },
 			sql = { "sql-formatter" },
+			java = { "google-java-format" },
 			["_"] = { "trim_whitespace" },
 		},
 		format_on_save = {

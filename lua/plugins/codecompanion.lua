@@ -323,14 +323,8 @@ return {
 				-- llm 角色名称可以是字符串或函数，函数可以动态显示适配器名称
 				roles = {
 					---The header name for the LLM's messages
-					---@type string|fun(adapter: CodeCompanion.Adapter): string
-					llm = function(adapter)
-						-- 动态显示适配器名称，例如 "CodeCompanion (Claude 3.5 Sonnet)"
-						return "CodeCompanion (" .. adapter.formatted_name .. ")"
-					end,
-
+					llm = "CodeCompanion",
 					---The header name for your messages
-					---@type string
 					user = "Me", -- 用户消息的显示名称
 				},
 				-- =========== 工具配置 ===========
