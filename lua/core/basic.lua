@@ -20,7 +20,7 @@ vim.opt.expandtab = true
 vim.opt.tabstop = 4
 
 --将换行缩进设置为零避免与tanstop冲突
-vim.opt.shiftwidth = 0
+vim.opt.shiftwidth = 4
 
 --自动加载外部修改
 vim.opt.autoread = true

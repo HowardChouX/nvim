@@ -13,19 +13,7 @@ return {
                 layout_config = {
                     prompt_position = "top",
                 },
-                -- 移除不正确的sorter配置，使用默认值
             },
-            -- 为 ui-select 扩展配置主题，可选
-            extensions = {
-                ["ui-select"] = {
-                    require("telescope.themes").get_dropdown {
-                        layout_strategy = "center",
-                        layout_config = {
-                            mirror = true,
-                        },
-                    }
-                }
-            }
         },
         config = function(_, opts)
             local telescope = require("telescope")
@@ -89,8 +77,8 @@ return {
 
             telescope.setup(opts)
 
-            -- 加载 ui-select 扩展，使得 vim.ui.select 使用 Telescope 界面
-            require("telescope").load_extension("ui-select")
+            -- 为 ui-select 扩展配置主题
+            telescope.load_extension("ui-select")
         end,
     },
 }

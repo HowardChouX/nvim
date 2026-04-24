@@ -160,6 +160,17 @@ vim.keymap.set("n", "<leader>t", ":ToggleTerm<CR>", {
 	desc = "打开/关闭终端 (Toggle Terminal) --插件(ToggleTerm)",
 })
 
+-- CodeCompanion 插件快捷键
+vim.keymap.set({ "n", "v" }, "<leader><tab>", "<cmd>CodeCompanionActions<CR>", {
+	desc = "CodeCompanion 动作面板 (Actions Palette) --插件(CodeCompanion)",
+})
+vim.keymap.set({ "n", "v" }, "<leader>a", "<cmd>CodeCompanionChat Toggle<CR>", {
+	desc = "CodeCompanion 聊天窗口 (Toggle Chat) --插件(CodeCompanion)",
+})
+vim.keymap.set("v", "ga", "<cmd>CodeCompanionChat Add<CR>", {
+	desc = "CodeCompanion 添加选中文本 (Add Selection) --插件(CodeCompanion)",
+})
+
 -- Terminal 模式下：Esc 切换到 Normal 模式 (退出终端插入模式)
 vim.keymap.set(
 	"t",

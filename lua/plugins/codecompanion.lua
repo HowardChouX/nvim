@@ -57,41 +57,6 @@ return {
 		"nvim-treesitter/nvim-treesitter", -- 语法高亮和解析，为 AI 提供更好的代码理解
 		"lalitmee/codecompanion-spinners.nvim", -- 加载动画和状态指示器
 	},
-	-- =========================== 快捷键配置 ============================
-	-- 快捷键定义了用户与插件交互的主要方式
-	-- 注意: 根据 CLAUDE.md 中的规则，所有快捷键应统一在 keymap.lua 中管理
-	-- 这里的快捷键是插件内置的快捷键定义
-	keys = {
-		-- =========== Action Palette (动作面板) ===========
-		-- 动作面板是插件的核心界面，提供各种预设动作和工具
-		-- 快捷键: <leader><tab> (通常是空格+tab)
-		{
-			"<leader><tab>", -- 快捷键组合
-			"<cmd>CodeCompanionActions<cr>", -- 执行的命令
-			mode = { "n", "v" }, -- 生效的模式: 普通模式(n)和可视模式(v)
-			desc = "CodeCompanion Actions", -- 快捷键描述
-		},
-
-		-- =========== Toggle Chat (切换聊天窗口) ===========
-		-- 打开/关闭与 AI 的聊天界面
-		-- 快捷键: <leader>a (通常是空格+a)
-		{
-			"<leader>a",
-			"<cmd>CodeCompanionChat Toggle<cr>",
-			mode = { "n", "v" },
-			desc = "CodeCompanion Chat Toggle",
-		},
-
-		-- =========== Add selection to chat (添加选中文本到聊天) ===========
-		-- 在可视模式下，将选中的文本添加到聊天窗口
-		-- 快捷键: ga (仅在可视模式下有效)
-		{
-			"ga",
-			"<cmd>CodeCompanionChat Add<cr>",
-			mode = "v", -- 仅在可视模式下生效
-			desc = "CodeCompanion Chat Add Selection",
-		},
-	},
 	-- =========================== 插件选项配置 ============================
 	-- opts 包含插件的主要配置选项
 	opts = {
@@ -196,7 +161,7 @@ return {
 				["tavily"] = {
 					cmd = { "npx", "-y", "@mcptools/mcp-tavily" },
 					env = {
-						TAVILY_API_KEY = "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", -- API 密钥
+						TAVILY_API_KEY = os.getenv("TAVILY_API_KEY") or get_setting("TAVILY_API_KEY") or "", -- API 密钥
 					},
 				},
 			},
