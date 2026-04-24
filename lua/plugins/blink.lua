@@ -1,11 +1,15 @@
 ---@diagnostic disable: undefined-global, undefined-doc-name
 return {
 	"saghen/blink.cmp",
-	build = "cargo build --release",
+	version = "1.*",
+	build = function()
+		require("blink.cmp").build():wait(60000)
+	end,
 	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		"rafamadriz/friendly-snippets",
 		"saghen/blink.compat",
+		"saghen/blink.lib",
 	},
 	---@module 'blink.cmp'
 	---@type blink.cmp.Config

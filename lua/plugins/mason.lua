@@ -35,7 +35,7 @@ return {
 				"pyright",
 				"clangd",
 				"sqls",
-				"jdtls", -- Java LSP
+				"jdtls",
 			},
 			automatic_enable = true,
 		})
@@ -96,37 +96,40 @@ return {
 			filetypes = { "sql", "mysql", "plsql" },
 		})
 
-		-- Racket LSP配置 - 暂时禁用，存在兼容性问题
-		-- vim.lsp.config("racket_langserver", {
-		-- 	filetypes = { "racket", "scheme" },
-		-- 	cmd = { "racket", "--lib", "racket-langserver" }, -- 正确的命令 [3]
-		-- 	settings = {
-		-- 		racket = {
-		-- 			completion = {
-		-- 				enabled = true,
-		-- 			},
-		-- 		},
-		-- 	},
-		-- })
-		-- -- 显式启用 racket_langserver
-		-- vim.lsp.enable("racket_langserver")
-
 		-- Java LSP配置 (jdtls)
+		-- 动态获取项目根目录下的 .jdtls 数据目录，避免不同项目间冲突
+		local java_root_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+		local java_data_dir = vim.fn.stdpath("data") .. "/lsp/jdtls/" .. java_root_dir
+
 		vim.lsp.config("jdtls", {
 			filetypes = { "java" },
+			-- jdtls 需要通过 cmd 指定启动参数，mason-lspconfig 通常会自动处理，
+			-- 但如果需要自定义 data 目录，通常建议配合 nvim-jdtls 插件或使用 on_attach 动态设置。
+			-- 在纯 lspconfig + mason 模式下，我们主要通过 settings 和 handlers 优化。
 			handlers = {
-				-- 禁用 jdtls 的格式化，让 conform 处理
+				-- 禁用 jdtls 的格式化，让 conform.nvim 处理 (google-java-format)
 				["textDocument/formatting"] = nil,
 				["textDocument/rangeFormatting"] = nil,
 			},
 			settings = {
 				java = {
 					configuration = {
-						runtimes = {},
+						-- 根据检测结果配置运行时。系统当前默认是 Java 21，但很多项目仍依赖 Java 17/11
+						-- 这里列出常见运行时，jdtls 会根据项目配置自动选择
+						runtimes = {
+							{
+								name = "JavaSE-21",
+								path = "/usr/lib/jvm/java-21-openjdk",
+								default = true,
+							},
+						},
 					},
 					format = {
-						enabled = false, -- 禁用内置格式化，使用 google-java-format
+						enabled = false, -- 禁用内置格式化，强制使用外部工具 (conform)
 					},
+					-- 优化签名帮助和文档生成
+					signatureHelp = { enabled = true },
+					contentProvider = { preferred = "fernflower" }, -- 使用 fernflower 反编译器查看源码
 				},
 			},
 		})
