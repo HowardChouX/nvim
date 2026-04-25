@@ -17,6 +17,15 @@ return {
 				cwd = "${workspaceFolder}",
 				stopOnEntry = true,
 				console = "internalConsole",
+				vmArgs = "-Xms128m -Xmx512m",
+			},
+			{
+				type = "java",
+				request = "attach",
+				name = "Debug (Attach)",
+				hostName = "localhost",
+				port = 5005,
+				cwd = "${workspaceFolder}",
 			},
 		}
 
