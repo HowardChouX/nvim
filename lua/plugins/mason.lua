@@ -1,6 +1,7 @@
 -- lua/mason.lua
 -- Mason 安装和自动安装 LSP
----@diagnostic disable
+---@diagnostic disable: undefined-global
+
 return {
 	"mason-org/mason.nvim",
 	event = "VeryLazy",
