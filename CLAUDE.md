@@ -43,27 +43,6 @@ This is a Neovim 0.11+ configuration using `lazy.nvim` as the plugin manager. Th
 :TSUpdate         " Update Treesitter parsers
 ```
 
-### Debugging (DAP)
-```vim
-<leader><F5>     " Start/Continue debug
-<leader><F9>     " Toggle breakpoint
-<leader><F10>    " Step over
-<leader><F11>    " Step into
-<leader><S-F11>  " Step out
-<leader><S-F5>   " Stop debug
-<leader>dv       " Show variables (dapui)
-<leader>dw       " Show watch expressions (dapui)
-<leader>ds       " Show call stack (dapui)
-```
-
-### Telescope Search
-```vim
-<leader>ff      " Find files
-<leader>fg      " Live grep (requires ripgrep)
-<leader>fb      " Find buffers
-<leader>fh      " Find help tags
-```
-
 ## Configuration Patterns
 
 ### Adding a New Plugin

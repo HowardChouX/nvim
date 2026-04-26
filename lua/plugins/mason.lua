@@ -131,10 +131,16 @@ return {
 					return
 				end
 
-				local bufnr = args.bufnr
+				local bufnr = args.buf
+				if not bufnr or bufnr == 0 or not vim.api.nvim_buf_is_valid(bufnr) then
+					return
+				end
 
-				-- Document Highlight
-				if client.server_capabilities.documentHighlightProvider then
+				local filetype = vim.bo[bufnr].filetype
+
+				-- Document Highlight (仅在编程语言文件上启用)
+				local highlight_filetypes = { "lua", "python", "c", "cpp", "java", "javascript", "typescript", "rust", "go" }
+				if client.server_capabilities.documentHighlightProvider and vim.tbl_contains(highlight_filetypes, filetype) then
 					local group = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })
 					vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {

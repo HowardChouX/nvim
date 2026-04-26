@@ -94,6 +94,7 @@ vim.keymap.set(
 vim.keymap.set("n", "ff", "<Cmd>HopWord<CR>", { silent = true, desc = "单词跳转 (Hop Word) --插件(Hop)" })
 
 -- Lspsaga 插件快捷键
+vim.keymap.set("n", "K", ":Lspsaga hover_doc<CR>", { desc = "悬停查看诊断 (Hover Diagnostic) --插件(Lspsaga)" })
 vim.keymap.set("n", "<F2>", ":Lspsaga rename<CR>", { desc = "全局重命名变量 (Rename) --插件(Lspsaga)" })
 vim.keymap.set(
 	"n",
@@ -139,7 +140,7 @@ end, {
 vim.keymap.set({ "n", "v" }, "<leader><tab>", "<cmd>Dashboard<CR>", {
 	desc = "打开仪表盘 (Open Dashboard) --插件(Dashboard)",
 })
-vim.keymap.set({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionChat Toggle<CR>", {
+vim.keymap.set({ "n", "v" }, "<leader>c", "<cmd>CodeCompanionChat Toggle<CR>", {
 	desc = "CodeCompanion 聊天窗口 (Toggle Chat) --插件(CodeCompanion)",
 })
 vim.keymap.set("v", "ga", "<cmd>CodeCompanionChat Add<CR>", {
