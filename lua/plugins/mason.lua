@@ -123,6 +123,28 @@ return {
 			},
 		})
 
+		-- 确保 jdtls 附加到所有 Java buffer（解决 yazi/dashboard 打开时不触发）
+		vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
+			pattern = "*.java",
+			group = vim.api.nvim_create_augroup("user_jdtls_attach", { clear = true }),
+			callback = function(args)
+				if vim.bo[args.buf].filetype ~= "java" then
+					return
+				end
+				if vim.lsp.get_clients({ bufnr = args.buf, name = "jdtls" })[1] then
+					return
+				end
+				-- 查找已运行的 jdtls，强制复用 root_dir
+				local existing = vim.lsp.get_clients({ name = "jdtls" })[1]
+				local jdtls_cfg = vim.lsp.config["jdtls"]
+				if jdtls_cfg and existing and existing.root_dir then
+					local cfg = vim.deepcopy(jdtls_cfg)
+					cfg.root_dir = existing.root_dir
+					pcall(vim.lsp.start, cfg, { bufnr = args.buf })
+				end
+			end,
+		})
+
 		-- LspAttach 事件处理
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
@@ -139,8 +161,12 @@ return {
 				local filetype = vim.bo[bufnr].filetype
 
 				-- Document Highlight (仅在编程语言文件上启用)
-				local highlight_filetypes = { "lua", "python", "c", "cpp", "java", "javascript", "typescript", "rust", "go" }
-				if client.server_capabilities.documentHighlightProvider and vim.tbl_contains(highlight_filetypes, filetype) then
+				local highlight_filetypes =
+					{ "lua", "python", "c", "cpp", "java", "javascript", "typescript", "rust", "go" }
+				if
+					client.server_capabilities.documentHighlightProvider
+					and vim.tbl_contains(highlight_filetypes, filetype)
+				then
 					local group = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })
 					vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
