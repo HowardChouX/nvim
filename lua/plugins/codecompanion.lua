@@ -209,7 +209,6 @@ return {
 			chat = {
 				auto_scroll = true, -- AI 响应时自动滚动到底部
 				fold_context = true, -- 折叠上下文以节省空间
-				fold_reasoning = true, -- 流式输出完成后折叠推理内容
 				show_reasoning = false, -- 不显示推理过程 (设置为 true 可看到 AI 思考过程)
 
 				-- =========== UI 界面选项 ===========
