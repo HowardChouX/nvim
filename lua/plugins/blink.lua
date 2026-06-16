@@ -7,7 +7,6 @@ return {
 	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		"rafamadriz/friendly-snippets",
-		"saghen/blink.compat",
 		"saghen/blink.lib",
 	},
 	---@module 'blink.cmp'

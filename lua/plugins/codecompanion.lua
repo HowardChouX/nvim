@@ -277,10 +277,9 @@ return {
 			-- =========== 后台交互配置 ===========
 			-- 后台任务使用独立的 AI 适配器，不干扰主聊天界面
 			background = {
-				-- 适配器配置: 后台任务使用的 AI 模型
+				-- 适配器配置: 后台任务使用 OpenCode ACP 适配器
 				adapter = {
-					name = "anthropic", -- 使用 Anthropic HTTP 适配器
-					model = get_setting("ANTHROPIC_MODEL"), -- 从 settings.json 获取模型
+					name = "opencode", -- 使用 OpenCode ACP 适配器
 				},
 
 				-- =========== 回调函数配置 ===========
@@ -302,13 +301,12 @@ return {
 			-- 主聊天界面配置，支持 ACP 和 HTTP 适配器切换
 			chat = {
 				-- =========== 适配器配置 ===========
-				-- 聊天界面使用的 AI 适配器
-				-- claude_code: 使用 Claude Code ACP 适配器 (推荐)
+				-- 聊天界面使用 OpenCode ACP 适配器
+				-- opencode: 使用 OpenCode ACP 适配器 (默认)
 				-- anthropic: 使用 HTTP 适配器直接调用 Anthropic API
 				-- deepseek: 使用 DeepSeek HTTP 适配器
 				adapter = {
-					name = "claude_code", -- 使用 Claude Code ACP 适配器
-					model = get_setting("ANTHROPIC_MODEL"), -- 从 settings.json 获取模型
+					name = "opencode", -- 使用 OpenCode ACP 适配器
 				},
 
 				-- =========== 角色名称配置 ===========
@@ -778,10 +776,9 @@ return {
 			-- 用户可以在不离开编辑窗口的情况下获取 AI 帮助
 			inline = {
 				-- =========== 适配器配置 ===========
-				-- 内联助手的 AI 模型适配器
+				-- 内联助手使用 OpenCode ACP 适配器
 				adapter = {
-					name = "anthropic", -- 使用 Anthropic HTTP 适配器
-					model = get_setting("ANTHROPIC_MODEL"), -- 从 settings.json 获取模型
+					name = "opencode", -- 使用 OpenCode ACP 适配器
 				},
 				-- =========== 快捷键配置 ===========
 				-- 内联助手的专用快捷键
@@ -821,10 +818,9 @@ return {
 			-- 用户可以通过 :CodeCompanion 命令来使用 AI
 			cmd = {
 				-- =========== 适配器配置 ===========
-				-- 命令行模式下使用的 AI 适配器
+				-- 命令行模式使用 OpenCode ACP 适配器
 				adapter = {
-					name = "anthropic", -- 使用 Anthropic HTTP 适配器
-					model = get_setting("ANTHROPIC_MODEL"), -- 从 settings.json 获取模型
+					name = "opencode", -- 使用 OpenCode ACP 适配器
 				},
 			},
 		},
@@ -967,4 +963,68 @@ return {
 			},
 		},
 	},
+
+	-- =========================== 图片粘贴支持 ===========================
+	-- 在聊天缓冲区按 Ctrl+V 时，检测剪贴板是否有图片
+	-- 有则编码后发送给 AI，无则回退到默认粘贴行为
+	init = function()
+		local group = vim.api.nvim_create_augroup("codecompanion_image_paste", { clear = true })
+
+		vim.api.nvim_create_autocmd("FileType", {
+			desc = "CodeCompanion 聊天缓冲区图片粘贴支持",
+			group = group,
+			pattern = "codecompanion",
+			callback = function(ev)
+				vim.keymap.set("i", "<C-v>", function()
+					-- 检查 wl-paste 是否可用
+					if vim.fn.executable("wl-paste") ~= 1 then
+						return vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-v>", true, true, true))
+					end
+
+					-- 检查剪贴板是否有图片
+					local has_image = vim.fn.system(
+						'wl-paste --list-types 2>/dev/null | grep -q image/png && echo "yes" || echo "no"'
+					)
+					if vim.trim(has_image) ~= "yes" then
+						return vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-v>", true, true, true))
+					end
+
+					-- 保存剪贴板图片到临时文件
+					local tmpfile = vim.fn.tempname() .. ".png"
+					vim.fn.system("wl-paste --type image/png > " .. vim.fn.shellescape(tmpfile))
+					if vim.v.shell_error ~= 0 then
+						vim.notify("剪贴板图片读取失败", vim.log.levels.WARN)
+						return vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-v>", true, true, true))
+					end
+
+					-- 获取当前聊天的 Chat 对象
+					local bufnr = ev.buf or vim.api.nvim_get_current_buf()
+					local chat = require("codecompanion").buf_get_chat(bufnr)
+
+					if not chat then
+						vim.notify("未找到 CodeCompanion Chat 实例", vim.log.levels.WARN)
+						return vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-v>", true, true, true))
+					end
+
+					local image_utils = require("codecompanion.utils.images")
+					local files_utils = require("codecompanion.utils.files")
+
+					local image = {
+						path = tmpfile,
+						id = tmpfile,
+						mimetype = files_utils.get_mimetype(tmpfile),
+					}
+
+					local encoded = image_utils.encode_image(image)
+					if type(encoded) == "string" then
+						vim.notify("图片编码失败: " .. encoded, vim.log.levels.WARN)
+						return vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-v>", true, true, true))
+					end
+
+					chat:add_image_message(encoded)
+					vim.notify("已粘贴图片到聊天", vim.log.levels.INFO)
+				end, { buffer = ev.buf, desc = "[CodeCompanion] 从剪贴板粘贴图片" })
+			end,
+		})
+	end,
 }
