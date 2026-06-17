@@ -37,6 +37,7 @@ return {
 				"clangd",
 				"sqls",
 				"jdtls",
+				"ts_ls",
 			},
 			automatic_enable = true,
 		})
@@ -96,9 +97,39 @@ return {
 		vim.lsp.config("sqls", {
 			filetypes = { "sql", "mysql", "plsql" },
 		})
+		-- TypeScript/JavaScript LSP配置
+		vim.lsp.config("ts_ls", {
+			filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+			settings = {
+				typescript = {
+					inlayHints = {
+						includeInlayParameterNameHints = "all",
+						includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+						includeInlayFunctionParameterTypeHints = true,
+						includeInlayVariableTypeHints = true,
+						includeInlayPropertyDeclarationTypeHints = true,
+						includeInlayFunctionLikeReturnTypeHints = true,
+						includeInlayEnumMemberValueHints = true,
+					},
+				},
+				javascript = {
+					inlayHints = {
+						includeInlayParameterNameHints = "all",
+						includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+						includeInlayFunctionParameterTypeHints = true,
+						includeInlayVariableTypeHints = true,
+						includeInlayPropertyDeclarationTypeHints = true,
+						includeInlayFunctionLikeReturnTypeHints = true,
+						includeInlayEnumMemberValueHints = true,
+					},
+				},
+			},
+		})
+
 
 		-- JDTLS 配置
 		vim.lsp.config("jdtls", {
+
 			filetypes = { "java" },
 			cmd = { "jdtls" },
 			root_dir = function(fname)
