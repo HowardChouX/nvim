@@ -277,9 +277,9 @@ return {
 			-- =========== 后台交互配置 ===========
 			-- 后台任务使用独立的 AI 适配器，不干扰主聊天界面
 			background = {
-				-- 适配器配置: 后台任务使用 OpenCode ACP 适配器
+				-- 适配器配置: 后台任务使用 Claude Code ACP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 
 				-- =========== 回调函数配置 ===========
@@ -301,12 +301,12 @@ return {
 			-- 主聊天界面配置，支持 ACP 和 HTTP 适配器切换
 			chat = {
 				-- =========== 适配器配置 ===========
-				-- 聊天界面使用 OpenCode ACP 适配器
-				-- opencode: 使用 OpenCode ACP 适配器 (默认)
+				-- 聊天界面使用 Claude Code ACP 适配器
+				-- claude_code: 使用 Claude Code ACP 适配器 (默认)
 				-- anthropic: 使用 HTTP 适配器直接调用 Anthropic API
 				-- deepseek: 使用 DeepSeek HTTP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 
 				-- =========== 角色名称配置 ===========
@@ -776,9 +776,9 @@ return {
 			-- 用户可以在不离开编辑窗口的情况下获取 AI 帮助
 			inline = {
 				-- =========== 适配器配置 ===========
-				-- 内联助手使用 OpenCode ACP 适配器
+				-- 内联助手使用 Claude Code ACP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 				-- =========== 快捷键配置 ===========
 				-- 内联助手的专用快捷键
@@ -818,9 +818,9 @@ return {
 			-- 用户可以通过 :CodeCompanion 命令来使用 AI
 			cmd = {
 				-- =========== 适配器配置 ===========
-				-- 命令行模式使用 OpenCode ACP 适配器
+				-- 命令行模式使用 Claude Code ACP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 			},
 		},
