@@ -279,7 +279,7 @@ return {
 			background = {
 				-- 适配器配置: 后台任务使用 OpenCode ACP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code",
 				},
 
 				-- =========== 回调函数配置 ===========
@@ -306,7 +306,7 @@ return {
 				-- anthropic: 使用 HTTP 适配器直接调用 Anthropic API
 				-- deepseek: 使用 DeepSeek HTTP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 
 				-- =========== 角色名称配置 ===========
@@ -778,7 +778,7 @@ return {
 				-- =========== 适配器配置 ===========
 				-- 内联助手使用 OpenCode ACP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 				-- =========== 快捷键配置 ===========
 				-- 内联助手的专用快捷键
@@ -818,9 +818,9 @@ return {
 			-- 用户可以通过 :CodeCompanion 命令来使用 AI
 			cmd = {
 				-- =========== 适配器配置 ===========
-				-- 命令行模式使用 OpenCode ACP 适配器
+				-- 命令行模式使用 Claude Code ACP 适配器
 				adapter = {
-					name = "opencode", -- 使用 OpenCode ACP 适配器
+					name = "claude_code", -- 使用 Claude Code ACP 适配器
 				},
 			},
 		},
