@@ -1,6 +1,11 @@
 ---@diagnostic disable: undefined-global, undefined-doc-name
 return {
 	"saghen/blink.cmp",
+	-- V2 需要编译 Rust 模糊匹配库，此钩子只在插件安装/更新时自动执行一次。
+	-- 如果启动时提示 "Rust fuzzy matcher not available, falling back to Lua"，
+	-- 说明构建缺失，手动执行一次即可修复（之后每次 :Lazy update 会自动重建）：
+	--   :Lazy build blink.cmp
+	-- 或在 :Lazy 面板中把光标移到 blink.cmp 上按 gb 重建。
 	build = function()
 		require("blink.cmp").build():pwait()
 	end,
