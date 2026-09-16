@@ -3,10 +3,12 @@ return {
 	event = "UIenter", -- 界面渲染完成后触发
 	dependencies = {
 		"nvim-tree/nvim-web-devicons",
+		"lalitmee/codecompanion-spinners.nvim",
 	},
 	opts = function()
 		---@diagnostic disable: undefined-global
 		local acp_mode = require("plugins.codecompanion.acp_mode")
+		local codecompanion_spinner = require("codecompanion._extensions.spinner.styles.lualine")
 
 		local function lsp_status_short()
 			local clients = vim.lsp.get_clients({ bufnr = 0 })
@@ -31,15 +33,16 @@ return {
 			sections = {
 				lualine_a = { "mode" },
 				lualine_b = { "branch", "diff" },
-			lualine_c = { "filename" },
-			lualine_x = {
-				{
-					acp_mode.lualine,
-					color = acp_mode.lualine_color,
-					separator = { left = "", right = "" },
-					padding = { left = 1, right = 1 },
-				}, -- 当前 ACP 权限模式徽标 (无会话时自动隐藏)
-				lsp_status_short,
+				lualine_c = { "filename" },
+				lualine_x = {
+					codecompanion_spinner.get_lualine_component(),
+					{
+						acp_mode.lualine,
+						color = acp_mode.lualine_color,
+						separator = { left = "", right = "" },
+						padding = { left = 1, right = 1 },
+					}, -- 当前 ACP 权限模式徽标 (无会话时自动隐藏)
+					lsp_status_short,
 					"filesize",
 					"encoding",
 					"filetype",
