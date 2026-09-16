@@ -35,7 +35,6 @@ return {
 				"lua_ls",
 				"pyright",
 				"clangd",
-				"sqls",
 				"jdtls",
 			},
 			automatic_enable = true,
@@ -90,11 +89,6 @@ return {
 				"-j=4",
 				"--pch-storage=memory",
 			},
-		})
-
-		-- SQL LSP配置
-		vim.lsp.config("sqls", {
-			filetypes = { "sql", "mysql", "plsql" },
 		})
 
 		-- JDTLS 配置
@@ -236,7 +230,6 @@ return {
 				"stylua",
 				"black",
 				"clang-format",
-				"sql-formatter",
 				"google-java-format",
 			},
 			auto_update = true,

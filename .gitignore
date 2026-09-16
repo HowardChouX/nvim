@@ -4,5 +4,8 @@ node_modules/
 # Generated files (no package.json exists)
 package-lock.json
 
+# Images pasted into CodeCompanion by img-clip.nvim
+lua/plugins/assets/
+
 # Claude Code local settings (may contain sensitive permissions)
 lua/plugins/.claude/

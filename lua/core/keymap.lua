@@ -58,38 +58,6 @@ vim.keymap.set("n", "<leader>fg", function()
 	require("telescope.builtin").live_grep()
 end, { desc = "全局搜索 (Live Grep) --插件(Telescope)" })
 
--- Bufferline 插件快捷键
-vim.keymap.set(
-	"n",
-	"<leader>bh",
-	":BufferLineCyclePrev<CR>",
-	{ silent = true, desc = "切换上一个标签 (Prev Buffer) --插件(Bufferline)" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>bl",
-	":BufferLineCycleNext<CR>",
-	{ silent = true, desc = "切换下一个标签 (Next Buffer) --插件(Bufferline)" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>bp",
-	":BufferLinePickClose<CR>",
-	{ silent = true, desc = "选择关闭标签 (Pick Close) --插件(Bufferline)" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>bc",
-	":BufferLineCloseOthers<CR>",
-	{ silent = true, desc = "关闭其他标签 (Close Others) --插件(Bufferline)" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>bd",
-	":bdelete<CR>",
-	{ silent = true, desc = "删除当前缓冲区 (Delete Buffer) --插件(Bufferline)" }
-)
-
 -- Hop 插件快捷键
 vim.keymap.set("n", "ff", "<Cmd>HopWord<CR>", { silent = true, desc = "单词跳转 (Hop Word) --插件(Hop)" })
 

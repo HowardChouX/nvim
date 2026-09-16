@@ -3,8 +3,6 @@ return {
 	event = "VimEnter",
 	dependencies = {
 		"nvim-tree/nvim-web-devicons",
-		"nvim-lualine/lualine.nvim",
-		"akinsho/bufferline.nvim",
 	},
 	config = function()
 		-- 自定义 Dashboard action 函数

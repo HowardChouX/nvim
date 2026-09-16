@@ -120,7 +120,6 @@ keymap.lua auto-reloads on save via BufWritePost autocmd.
 - `lua_ls` - Lua
 - `pyright` - Python
 - `clangd` - C/C++
-- `sqls` - SQL
 
 ## Pre-configured Formatters (via conform.nvim)
 
