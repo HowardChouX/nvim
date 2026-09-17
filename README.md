@@ -116,12 +116,18 @@ nvim
 - `html` - HTML
 - `cssls` - CSS / SCSS / Less
 - `emmet_language_server` - HTML / CSS / JSX / Vue 缩写补全
-- `jdtls` - Java（检测到 JDK 时启用）
+- `jsonls` - JSON / JSONC（含 tsconfig、package.json 的 schema 校验）
+- `yamlls` - YAML（docker-compose、GitHub Actions 等 schema 校验）
+- `marksman` - Markdown（跨文件跳转、`[[wikilink]]`）
+- `bashls` - Shell 脚本
+- `dockerls` - Dockerfile
+- `eslint` - ESLint（仅在项目内存在 ESLint 配置时启动）
+- `jdtls` - Java（检测到 JDK 时启用，需 21+）
 
 **用法**:
 ```vim
-:LspInfo              " 显示已连接的 LSP 客户端
-:LspRestart           " 重启当前缓冲区的 LSP 服务器
+:checkhealth vim.lsp   " 显示已启用配置与活动客户端（0.12 起 :LspInfo 已不存在）
+:lsp restart           " 重启当前缓冲区的 LSP 服务器
 ```
 
 ---
@@ -141,8 +147,9 @@ nvim
 
 | 类型 | 工具 |
 |------|------|
-| LSP 服务器 | lua_ls, pyright, clangd, jdtls, vtsls, vue_ls, html, cssls, emmet_language_server |
+| LSP 服务器 | lua_ls, pyright, clangd, jdtls, vtsls, vue_ls, html, cssls, emmet_language_server, jsonls, yamlls, marksman, bashls, dockerls, eslint |
 | 格式化器 | stylua, black, clang-format, google-java-format, sql-formatter, prettier |
+| 静态检查 | shellcheck（供 bashls 使用） |
 
 ---
 

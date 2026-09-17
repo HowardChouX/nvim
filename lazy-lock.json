@@ -4,7 +4,7 @@
   "blink.lib": { "branch": "main", "commit": "fd9a48ebbe6ec30d5dfcc5b42c243941ccdca1aa" },
   "bufferline.nvim": { "branch": "main", "commit": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3" },
   "codecompanion-spinners.nvim": { "branch": "main", "commit": "f613a543ca8c7ba1686830c6bb1a10d15a2e1942" },
-  "codecompanion.nvim": { "branch": "main", "commit": "3d83aaa78ed125ea403fe8c975e51f07cf0c49b0" },
+  "codecompanion.nvim": { "branch": "main", "commit": "5126e399a0d5d1d4e5d34578a5472c6be5a5f8d3" },
   "conform.nvim": { "branch": "master", "commit": "016802de402556da54c36bd7359b441266b01cdd" },
   "dashboard-nvim": { "branch": "master", "commit": "f787e3462c2ee2b6117b17c1aa4ddf66cb6f57fe" },
   "friendly-snippets": { "branch": "main", "commit": "b4d01b0fdf3c9a549961c2f9ffe8dc09be166219" },

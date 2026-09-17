@@ -146,6 +146,13 @@ return {
 			"html",
 			"cssls",
 			"emmet_language_server",
+			-- 以下按实际项目补全：json / yaml / markdown / shell / docker 此前完全没有 LSP。
+			"jsonls", -- tsconfig、package.json、project.config.json 等
+			"yamlls", -- docker-compose、CI、k8s 清单
+			"marksman", -- markdown，含 obsidian 笔记仓库的 wiki 链接跳转
+			"bashls", -- shell 脚本，配合 shellcheck 出诊断
+			"dockerls", -- 各个项目里的 Dockerfile
+			"eslint", -- 仅在存在 eslint 配置的项目里启动
 		}
 		local detected_java_home = java_home()
 		if detected_java_home then
@@ -254,6 +261,7 @@ return {
 				"google-java-format",
 				"sql-formatter",
 				"prettier",
+				"shellcheck",
 			},
 			auto_update = false,
 			run_on_start = true,

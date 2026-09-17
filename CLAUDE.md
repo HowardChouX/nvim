@@ -33,7 +33,7 @@ file in `lua/plugins/` returns a lazy.nvim plugin specification.
 :Mason
 :MasonToolsInstall
 :ConformInfo
-:LspInfo
+:checkhealth vim.lsp
 :TSUpdate
 ```
 
@@ -66,7 +66,13 @@ Configured language servers:
 - `html`
 - `cssls`
 - `emmet_language_server`
-- `jdtls` when a valid JDK/JAVA_HOME is available
+- `jsonls`
+- `yamlls`
+- `marksman`
+- `bashls`
+- `dockerls`
+- `eslint` (only starts in projects that contain an ESLint config)
+- `jdtls` when a valid JDK/JAVA_HOME is available (JDK 21+)
 
 Configured formatters:
 
@@ -77,6 +83,8 @@ Configured formatters:
 - `sql-formatter`
 - `prettier` (JavaScript / TypeScript / React / Vue / HTML / CSS / JSON)
 - Conform's built-in `trim_whitespace`
+
+`shellcheck` is installed alongside them for `bashls` diagnostics.
 
 Mason binaries are prepended to `PATH` during startup. Do not hard-code an
 executable path as a language runtime home; for Java, use a real JDK root.
