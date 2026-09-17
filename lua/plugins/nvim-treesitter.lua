@@ -36,7 +36,9 @@ return {
 		-- 已安装的会自动跳过，缺失的异步下载并编译
 		require("nvim-treesitter").install(parsers)
 
+		local group = vim.api.nvim_create_augroup("UserTreesitter", { clear = true })
 		vim.api.nvim_create_autocmd("FileType", {
+			group = group,
 			callback = function(args)
 				local buf = args.buf
 				-- 没有对应解析器时 start 会报错，直接跳过

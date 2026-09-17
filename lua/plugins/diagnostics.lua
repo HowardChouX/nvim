@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-global
 return {
 	"neovim/nvim-lspconfig",
-	event = "VeryLazy",
+	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		vim.diagnostic.config({
 			virtual_text = {
@@ -21,23 +21,20 @@ return {
 			severity_sort = true,
 			float = {
 				focusable = false,
-				style = "minimal",
 				border = "rounded",
 				source = true,
 				header = "",
 				prefix = "",
 			},
-			jump_opts = {
-				focus = true,
-				win = function(diag)
-					return {
-						relative = "cursor",
-						row = diag.lnum + 1,
-						col = diag.col,
-					}
+			jump = {
+				on_jump = function(_, bufnr)
+					vim.diagnostic.open_float({
+						bufnr = bufnr,
+						scope = "cursor",
+						focus = false,
+					})
 				end,
 			},
 		})
 	end,
 }
-

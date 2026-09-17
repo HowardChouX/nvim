@@ -2,8 +2,8 @@
 ---@diagnostic disable: undefined-global
 return {
 	"folke/tokyonight.nvim",
-    lazy = false,-- 禁用懒加载否则lualine渲染容易失败
-    priority = 1000, -- 高优先级
+	lazy = false, -- 禁用懒加载否则lualine渲染容易失败
+	priority = 1000, -- 高优先级
 	opts = {
 		style = "moon",
 	},

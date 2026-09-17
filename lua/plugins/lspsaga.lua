@@ -4,6 +4,8 @@
 return {
 	"nvimdev/lspsaga.nvim",
 	event = "LspAttach",
+	-- 提供 :Lspsaga 命令存根，避免在 LSP 尚未附加时按下 K / <leader>ld 报 E492。
+	cmd = "Lspsaga",
 	opts = {
 		finder = {
 			keys = {

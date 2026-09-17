@@ -1,154 +1,110 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This repository contains a Neovim 0.12+ configuration managed by `lazy.nvim`.
+The primary AI integration is CodeCompanion using Claude Code over ACP (Agent
+Client Protocol).
 
-## Overview
+## Structure
 
-This is a Neovim 0.11+ configuration using `lazy.nvim` as the plugin manager. The config is written in Lua with the primary AI assistant being CodeCompanion with full MCP (Model Context Protocol) support.
-
-## Architecture
-
-```
+```text
 ~/.config/nvim/
-├── init.lua              # Entry point - loads core modules in order: basic, keymap, lazy
-├── lua/
-│   ├── core/
-│   │   ├── basic.lua     # Editor options (numbers, tabs, clipboard, etc.)
-│   │   ├── keymap.lua    # All keybindings with Chinese descriptions
-│   │   └── lazy.lua      # lazy.nvim bootstrap and plugin import
-│   └── plugins/          # Individual plugin configs (lazy.nvim spec)
-├── snippets/             # LuaSnip snippets (JSON format)
-└── plugin/               # Generated plugin directory
+├── init.lua
+├── lazy-lock.json
+└── lua/
+    ├── core/
+    │   ├── basic.lua
+    │   ├── keymap.lua
+    │   └── lazy.lua
+    └── plugins/
+        ├── codecompanion.lua
+        ├── codecompanion/acp_mode.lua
+        └── *.lua
 ```
 
-**Plugin Loading Pattern**: Each file in `lua/plugins/` returns a lazy.nvim spec table. `lazy.lua` imports all plugins via `{ import = "plugins" }`.
+`init.lua` loads `core.basic`, `core.keymap`, then `core.lazy`. Each top-level
+file in `lua/plugins/` returns a lazy.nvim plugin specification.
 
-## Common Commands
+## Common commands
 
-### Plugin Management
 ```vim
-:Lazy sync        " Install/update/clean plugins
-:Lazy clean       " Remove unused plugins
-:Lazy profile     " Analyze startup performance
-:Lazy health      " Check plugin health status
+:Lazy sync
+:Lazy profile
+:checkhealth
+:Mason
+:MasonToolsInstall
+:ConformInfo
+:LspInfo
+:TSUpdate
 ```
 
-### LSP & Formatting
-```vim
-:Mason            " Open Mason UI to install LSP servers
-:MasonInstall all " Install all configured LSP servers and tools
-:LspInfo          " Show attached LSP clients
-:LspRestart       " Restart LSP server for current buffer
-:TSInstall all    " Install all Treesitter parsers
-:TSUpdate         " Update Treesitter parsers
-```
+## Conventions
 
-## Configuration Patterns
+- Put editor-wide options and autocmds in `lua/core/basic.lua`.
+- Put user-facing global keymaps in `lua/core/keymap.lua`.
+- Buffer-local or plugin-internal mappings may stay in the relevant plugin
+  configuration when they depend on plugin state or capabilities.
+- Give global mappings a Chinese description, an English translation, and a
+  source tag such as `--系统`, `--自定义`, `--LSP`, or `--插件(Name)`.
+- Put LSP server definitions and Mason-managed tools in `lua/plugins/mason.lua`.
+- Use Neovim's `vim.lsp.config()` and `vim.lsp.enable()` APIs; do not add legacy
+  `require("lspconfig").SERVER.setup()` calls.
+- Prefer `opts` over a `config` function when the latter only calls
+  `require(...).setup(opts)`.
+- Do not copy plugin defaults into local configuration unless intentionally
+  overriding them.
 
-### Adding a New Plugin
-Create a new file in `lua/plugins/` that returns a lazy.nvim spec:
-```lua
----@diagnostic disable: undefined-global
-return {
-  "author/plugin-name",
-  event = "VeryLazy",
-  opts = { /* plugin options */ },
-}
-```
+## LSP and formatting
 
-### LSP Server Configuration
-LSP servers are configured in `lua/plugins/mason.lua` using Neovim 0.11's `vim.lsp.config()` API:
-```lua
-vim.lsp.config("server_name", {
-  filetypes = { "lua" },
-  settings = { ... },
-})
-```
+Configured language servers:
 
-### Keymap Binding Rules
+- `lua_ls`
+- `pyright`
+- `clangd`
+- `vtsls` (JavaScript / TypeScript / React; also handles `<script>` in Vue SFCs
+  through `@vue/typescript-plugin`)
+- `vue_ls`
+- `html`
+- `cssls`
+- `emmet_language_server`
+- `jdtls` when a valid JDK/JAVA_HOME is available
 
-**重要原则**：所有快捷键必须统一管理在 `lua/core/keymap.lua` 中，禁止在插件配置文件里直接定义快捷键。
+Configured formatters:
 
-All keymaps include Chinese descriptions with source tags:
-```lua
-vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<CR>",
-  { desc = "查找文件 (Find Files) --插件(Telescope)" })
-```
+- `stylua`
+- `black`
+- `clang-format`
+- `google-java-format`
+- `sql-formatter`
+- `prettier` (JavaScript / TypeScript / React / Vue / HTML / CSS / JSON)
+- Conform's built-in `trim_whitespace`
 
-Description format: `中文描述 (English Description) --类型`
-- Type tags: `--系统`、`--自定义`、`--插件(名称)`
+Mason binaries are prepended to `PATH` during startup. Do not hard-code an
+executable path as a language runtime home; for Java, use a real JDK root.
 
-keymap.lua auto-reloads on save via BufWritePost autocmd.
+## CodeCompanion
 
-## Plugin Ecosystem
+CodeCompanion is intentionally Claude-only:
 
-### Core Plugins
-- **lazy.nvim**: Plugin manager with lazy loading
-- **mason.nvim**: LSP/DAP/Linter/Formatter installer
-- **nvim-lspconfig**: LSP client configuration
-- **nvim-cmp**: Completion engine
-- **blink.nvim**: AI-powered code completion
-- **telescope.nvim**: Fuzzy finder
-- **nvim-treesitter**: Syntax highlighting and parsing
-- **codecompanion.nvim**: AI coding assistant with MCP support
-- **noice.nvim**: Modern UI components
-- **aerial.nvim**: Code outline sidebar
-- **dashboard-nvim**: Startup screen
+- chat, inline, and command interactions use `claude_code`;
+- background interactions are disabled: ACP adapters are not supported there;
+- HTTP adapters and other ACP presets are hidden;
+- Claude Code owns filesystem, shell, web, rules, skills, and permission logic;
+- CodeCompanion does not auto-inject rule files or external MCP servers;
+- `Shift-Tab` in a chat buffer cycles Claude ACP permission modes;
+- `Ctrl-V` in a chat buffer pastes an image through `img-clip.nvim`;
+- pasted images are stored under Neovim's data directory, outside this repo.
 
-### UI & Navigation
-- **tokyonight.nvim**: Color theme
-- **lualine.nvim**: Status line
-- **bufferline.nvim**: Buffer tabs
-- **indent-blankline.nvim**: Indentation guides
-- **hop.nvim**: Easy motion navigation
-- **yazi.nvim**: File manager integration
+Authentication is handled by Claude Code itself. No Anthropic, DeepSeek, or
+Tavily API key is read by this repository.
 
-### Editing & LSP
-- **conform.nvim**: Code formatting
-- **lspsaga.nvim**: Enhanced LSP UI
-- **nvim-autopairs**: Auto-pair brackets
-- **vim-visual-multi**: Multiple cursors
-- **nvim-surround**: Text surrounding operations
+## External requirements
 
-### Debugging
-- **nvim-dap**: Debug Adapter Protocol client
-- **nvim-dap-ui**: DAP UI components
-- **nvim-java**: Java debugging support (with java.lua config)
-
-## Pre-configured LSP Servers
-
-- `lua_ls` - Lua
-- `pyright` - Python
-- `clangd` - C/C++
-
-## Pre-configured Formatters (via conform.nvim)
-
-- `stylua` - Lua
-- `black` - Python
-- `clang-format` - C/C++
-
-## Dependencies
-
-Required external tools:
-- `git` - Plugin management
-- `node` + `npm` - LSP servers, MCP servers
-- `gcc` - Treesitter compilation
-- `ripgrep` + `fd` - Telescope search (recommended)
-
-## Environment Variables
-
-For AI functionality, set these in your shell:
-```bash
-export ANTHROPIC_API_KEY="your-key"
-export ANTHROPIC_MODEL="claude-3-5-sonnet-20241022"
-export TAVILY_API_KEY="your-key"
-```
-
-## File Structure Conventions
-
-- `lua/core/` - Core configuration (basic, keymaps, lazy loading)
-- `lua/plugins/` - Individual plugin configurations
-- Each plugin gets its own `.lua` file returning a lazy.nvim spec table
-- Keymaps are centralized in `keymap.lua`
-- LSP configurations are in `mason.lua`
-- AI assistant configuration is in `codecompanion.lua`
+- Git
+- Neovim 0.12+
+- Node.js and npm
+- a C compiler and Tree-sitter CLI
+- `ripgrep` and preferably `fd`
+- `yazi`
+- `pngpaste` on macOS for clipboard images
+- a JDK and `JAVA_HOME` for Java/JDTLS
+- `claude-agent-acp` and an authenticated Claude Code session

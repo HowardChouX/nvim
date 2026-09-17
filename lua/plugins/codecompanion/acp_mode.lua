@@ -21,11 +21,11 @@ local M = {}
 ---使用紧凑标签和 Nerd Font 图标；未知模式回退到 agent 返回的名称。
 ---@type table<string, { label: string, icon: string, fg: string, bg: string }>
 M.display = {
-    default = { label = "ASK", icon = "", fg = "#7aa2f7", bg = "#1f2335" },
-    acceptEdits = { label = "EDIT", icon = "", fg = "#e0af68", bg = "#29243a" },
-    plan = { label = "PLAN", icon = "", fg = "#7dcfff", bg = "#1f2b3d" },
-    auto = { label = "AUTO", icon = "", fg = "#9ece6a", bg = "#20303b" },
-    bypassPermissions = { label = "BYPASS", icon = "", fg = "#f7768e", bg = "#3b2230" },
+	default = { label = "ASK", icon = "", fg = "#7aa2f7", bg = "#1f2335" },
+	acceptEdits = { label = "EDIT", icon = "", fg = "#e0af68", bg = "#29243a" },
+	plan = { label = "PLAN", icon = "", fg = "#7dcfff", bg = "#1f2b3d" },
+	auto = { label = "AUTO", icon = "", fg = "#9ece6a", bg = "#20303b" },
+	bypassPermissions = { label = "BYPASS", icon = "", fg = "#f7768e", bg = "#3b2230" },
 }
 
 ---循环切换时跳过的模式
@@ -40,35 +40,35 @@ M.skip_in_cycle = {}
 ---@param chat CodeCompanion.Chat|integer|nil
 ---@return CodeCompanion.Chat|nil
 function M.resolve_chat(chat)
-    if type(chat) == "table" and chat.acp_connection then
-        return chat
-    end
+	if type(chat) == "table" and chat.acp_connection then
+		return chat
+	end
 
-    local cc = package.loaded["codecompanion"]
-    if not cc then
-        return nil
-    end
+	local cc = package.loaded["codecompanion"]
+	if not cc then
+		return nil
+	end
 
-    if type(chat) == "number" then
-        -- buf_get_chat 对 HTTP 适配器的 chat 也会返回对象 (只是没有 acp_connection)，
-        -- 这里必须一并校验，否则调用方拿到一个没有 ACP 连接的 chat 会在下游索引 nil
-        local c = cc.buf_get_chat(chat)
-        return (c and c.acp_connection) and c or nil
-    end
+	if type(chat) == "number" then
+		-- buf_get_chat 对 HTTP 适配器的 chat 也会返回对象 (只是没有 acp_connection)，
+		-- 这里必须一并校验，否则调用方拿到一个没有 ACP 连接的 chat 会在下游索引 nil
+		local c = cc.buf_get_chat(chat)
+		return (c and c.acp_connection) and c or nil
+	end
 
-    -- 优先当前缓冲区，其次任意一个仍活着的 ACP 会话
-    local cur = cc.buf_get_chat(vim.api.nvim_get_current_buf())
-    if cur and cur.acp_connection then
-        return cur
-    end
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_loaded(bufnr) then
-            local c = cc.buf_get_chat(bufnr)
-            if c and c.acp_connection then
-                return c
-            end
-        end
-    end
+	-- 优先当前缓冲区，其次任意一个仍活着的 ACP 会话
+	local cur = cc.buf_get_chat(vim.api.nvim_get_current_buf())
+	if cur and cur.acp_connection then
+		return cur
+	end
+	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_loaded(bufnr) then
+			local c = cc.buf_get_chat(bufnr)
+			if c and c.acp_connection then
+				return c
+			end
+		end
+	end
 end
 
 ---@class CodeCompanion.ACPMode
@@ -82,41 +82,41 @@ end
 ---@return CodeCompanion.ACPMode|nil mode
 ---@return string|nil err
 function M.get(chat)
-    local c = M.resolve_chat(chat)
-    if not c then
-        return nil, "当前没有活跃的 ACP 会话"
-    end
+	local c = M.resolve_chat(chat)
+	if not c then
+		return nil, "当前没有活跃的 ACP 会话"
+	end
 
-    local acp = require("codecompanion.acp")
-    for _, opt in ipairs(c.acp_connection:get_config_options()) do
-        if opt.category == "mode" and opt.type == "select" then
-            -- 会话刚建立时 agent 可能还没给出当前值。此时若继续会渲染出 "ACP nil"，
-            -- 所以明确报错而不是返回一个 value 为空的 table
-            if opt.currentValue == nil then
-                return nil, "ACP mode 尚未初始化"
-            end
+	local acp = require("codecompanion.acp")
+	for _, opt in ipairs(c.acp_connection:get_config_options()) do
+		if opt.category == "mode" and opt.type == "select" then
+			-- 会话刚建立时 agent 可能还没给出当前值。此时若继续会渲染出 "ACP nil"，
+			-- 所以明确报错而不是返回一个 value 为空的 table
+			if opt.currentValue == nil then
+				return nil, "ACP mode 尚未初始化"
+			end
 
-            local values = acp.flatten_config_options(opt.options or {})
+			local values = acp.flatten_config_options(opt.options or {})
 
-            -- 反查展示名；查不到就退回 value id
-            local name = opt.currentValue
-            for _, v in ipairs(values) do
-                if v.value == opt.currentValue then
-                    name = v.name or v.value
-                    break
-                end
-            end
+			-- 反查展示名；查不到就退回 value id
+			local name = opt.currentValue
+			for _, v in ipairs(values) do
+				if v.value == opt.currentValue then
+					name = v.name or v.value
+					break
+				end
+			end
 
-            return {
-                id = opt.id,
-                value = opt.currentValue,
-                name = name,
-                options = values,
-            }
-        end
-    end
+			return {
+				id = opt.id,
+				value = opt.currentValue,
+				name = name,
+				options = values,
+			}
+		end
+	end
 
-    return nil, "该 adapter 未暴露 mode 选项"
+	return nil, "该 adapter 未暴露 mode 选项"
 end
 
 ---循环切换到下一个模式 (末尾回到开头)
@@ -124,53 +124,53 @@ end
 ---@return CodeCompanion.ACPMode|nil mode 切换后的模式
 ---@return string|nil err
 function M.cycle(chat)
-    local c = M.resolve_chat(chat)
-    if not c then
-        return nil, "当前没有活跃的 ACP 会话"
-    end
+	local c = M.resolve_chat(chat)
+	if not c then
+		return nil, "当前没有活跃的 ACP 会话"
+	end
 
-    local mode, err = M.get(c)
-    if not mode then
-        return nil, err
-    end
+	local mode, err = M.get(c)
+	if not mode then
+		return nil, err
+	end
 
-    local values = mode.options
-    if #values == 0 then
-        return nil, "mode 没有可选值"
-    end
+	local values = mode.options
+	if #values == 0 then
+		return nil, "mode 没有可选值"
+	end
 
-    -- 定位当前值。idx 初始为 0: 万一 currentValue 不在列表内 (例如 agent 切模型后
-    -- 把 mode 改成了列表外的值)，视为从头开始
-    local idx = 0
-    for i, v in ipairs(values) do
-        if v.value == mode.value then
-            idx = i
-            break
-        end
-    end
+	-- 定位当前值。idx 初始为 0: 万一 currentValue 不在列表内 (例如 agent 切模型后
+	-- 把 mode 改成了列表外的值)，视为从头开始
+	local idx = 0
+	for i, v in ipairs(values) do
+		if v.value == mode.value then
+			idx = i
+			break
+		end
+	end
 
-    -- 往后找第一个未被跳过的模式。最多绕一圈，找不到就报错而不是死循环
-    local next_val
-    for step = 1, #values do
-        local candidate = values[(idx + step - 1) % #values + 1]
-        if not M.skip_in_cycle[candidate.value] then
-            next_val = candidate
-            break
-        end
-    end
-    if not next_val then
-        return nil, "没有可切换的 mode"
-    end
+	-- 往后找第一个未被跳过的模式。最多绕一圈，找不到就报错而不是死循环
+	local next_val
+	for step = 1, #values do
+		local candidate = values[(idx + step - 1) % #values + 1]
+		if not M.skip_in_cycle[candidate.value] then
+			next_val = candidate
+			break
+		end
+	end
+	if not next_val then
+		return nil, "没有可切换的 mode"
+	end
 
-    if not c.acp_connection:set_config_option(mode.id, next_val.value) then
-        return nil, "切换 ACP mode 失败"
-    end
+	if not c.acp_connection:set_config_option(mode.id, next_val.value) then
+		return nil, "切换 ACP mode 失败"
+	end
 
-    return {
-        id = mode.id,
-        value = next_val.value,
-        name = next_val.name or next_val.value,
-    }
+	return {
+		id = mode.id,
+		value = next_val.value,
+		name = next_val.name or next_val.value,
+	}
 end
 
 ---渲染紧凑的图标与模式标签
@@ -178,29 +178,29 @@ end
 ---@param chat CodeCompanion.Chat|integer|nil 省略时自动解析
 ---@return string
 function M.render(chat)
-    local mode = M.get(chat)
-    if not mode then
-        return ""
-    end
+	local mode = M.get(chat)
+	if not mode then
+		return ""
+	end
 
-    local style = M.display[mode.value]
-    if not style then
-        return "󰒃 " .. mode.name
-    end
+	local style = M.display[mode.value]
+	if not style then
+		return "󰒃 " .. mode.name
+	end
 
-    return string.format("%s %s", style.icon, style.label)
+	return string.format("%s %s", style.icon, style.label)
 end
 
 ---返回当前模式的徽标颜色
 ---@return { fg: string, bg: string, gui: string }|nil
 function M.lualine_color()
-    local mode = M.get()
-    local style = mode and M.display[mode.value]
-    if not style then
-        return nil
-    end
+	local mode = M.get()
+	local style = mode and M.display[mode.value]
+	if not style then
+		return nil
+	end
 
-    return { fg = style.fg, bg = style.bg, gui = "bold" }
+	return { fg = style.fg, bg = style.bg, gui = "bold" }
 end
 
 ---lualine 组件入口
@@ -209,7 +209,7 @@ end
 ---不去猜测传入的第一个表是什么，始终自动解析当前会话
 ---@return string
 function M.lualine()
-    return M.render()
+	return M.render()
 end
 
 return M

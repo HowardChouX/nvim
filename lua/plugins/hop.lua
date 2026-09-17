@@ -1,9 +1,10 @@
 -- 告诉 Lua 语言服务器 vim 是全局变量
 ---@diagnostic disable: undefined-global
 return {
-    "smoka7/hop.nvim",
-    event = "VeryLazy",
-    opts = {
-        hint_position = 3
-    },
+	"smoka7/hop.nvim",
+	event = "VeryLazy",
+	cmd = "HopWord",
+	opts = {
+		hint_position = 3,
+	},
 }

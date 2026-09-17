@@ -111,7 +111,12 @@ nvim
 - `lua_ls` - Lua
 - `pyright` - Python
 - `clangd` - C/C++
-- `sqls` - SQL
+- `vtsls` - JavaScript / TypeScript / React（并处理 Vue SFC 中的 `<script>`）
+- `vue_ls` - Vue
+- `html` - HTML
+- `cssls` - CSS / SCSS / Less
+- `emmet_language_server` - HTML / CSS / JSX / Vue 缩写补全
+- `jdtls` - Java（检测到 JDK 时启用）
 
 **用法**:
 ```vim
@@ -136,8 +141,8 @@ nvim
 
 | 类型 | 工具 |
 |------|------|
-| LSP 服务器 | lua_ls, pyright, clangd, sqls |
-| 格式化器 | stylua, black, clang-format, sql-formatter |
+| LSP 服务器 | lua_ls, pyright, clangd, jdtls, vtsls, vue_ls, html, cssls, emmet_language_server |
+| 格式化器 | stylua, black, clang-format, google-java-format, sql-formatter, prettier |
 
 ---
 
@@ -349,7 +354,9 @@ lua, vim, vimdoc, toml, python, cpp, c, json, yaml, bash, markdown, markdown_inl
 | Lua | stylua |
 | Python | black |
 | C/C++ | clang-format |
+| Java | google-java-format |
 | SQL | sql-formatter |
+| JavaScript / TypeScript / React / Vue / HTML / CSS / JSON | prettier |
 
 ---
 

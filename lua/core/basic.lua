@@ -25,6 +25,16 @@ vim.opt.shiftwidth = 4
 --自动加载外部修改
 vim.opt.autoread = true
 
+local autoread_group = vim.api.nvim_create_augroup("UserAutoRead", { clear = true })
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+	group = autoread_group,
+	callback = function()
+		if vim.fn.getcmdwintype() == "" then
+			pcall(vim.cmd.checktime)
+		end
+	end,
+})
+
 --分屏默认设置为下方和右方
 vim.opt.splitbelow = true
 vim.opt.splitright = true
@@ -49,6 +59,9 @@ vim.opt.clipboard = "unnamedplus"
 -- 建议值：200-300ms
 vim.opt.timeoutlen = 350
 
+-- 缩短 CursorHold 等事件等待时间，使 LSP 文档高亮更及时
+vim.opt.updatetime = 250
+
 --暗色背景
 vim.o.background = "dark"
 
@@ -57,6 +70,11 @@ vim.opt.termguicolors = true
 
 -- 禁用 perl provider (避免警告)
 vim.g.loaded_perl_provider = 0
+
+-- 当前配置没有使用远程插件 provider；Node/Python 仍可供 LSP 和工具进程使用
+vim.g.loaded_node_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
 
 -- 禁用鼠标支持 (所有模式)
 vim.opt.mouse = ""

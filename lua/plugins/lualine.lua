@@ -58,33 +58,35 @@ return {
 	end,
 	config = function(_, opts)
 		require("lualine").setup(opts)
+		local refresh_pending = false
+		local function refresh_lualine(delay)
+			if refresh_pending then
+				return
+			end
+			refresh_pending = true
+			vim.defer_fn(function()
+				refresh_pending = false
+				if package.loaded["lualine"] then
+					require("lualine").refresh({ force = true })
+				end
+			end, delay)
+		end
 
 		vim.api.nvim_create_augroup("LualineLSP", { clear = true })
-		vim.api.nvim_create_autocmd({ "LspAttach", "DiagnosticChanged" }, {
+		vim.api.nvim_create_autocmd({ "LspAttach", "LspDetach" }, {
 			group = "LualineLSP",
 			callback = function()
-				vim.defer_fn(function()
-					require("lualine").refresh()
-				end, 100)
+				refresh_lualine(50)
 			end,
 		})
 
-		-- ACP 权限模式变化不会产生任何 Vim 事件，必须显式刷新状态栏
-		-- 同时覆盖聊天的创建/关闭，让指示器及时出现与消失
-		-- 用 force: 默认的 refresh() 是入队等定时器，按键后可能延迟约 1 秒才体现
+		-- 权限徽标与 Spinner 都由 CodeCompanion User 事件驱动。
 		vim.api.nvim_create_augroup("LualineACP", { clear = true })
 		vim.api.nvim_create_autocmd("User", {
 			group = "LualineACP",
-			pattern = {
-				"CodeCompanionChatACPConfigChanged",
-				"CodeCompanionChatCreated",
-				"CodeCompanionChatClosed",
-				"CodeCompanionACPConnected",
-			},
+			pattern = "CodeCompanion*",
 			callback = function()
-				vim.defer_fn(function()
-					require("lualine").refresh({ force = true })
-				end, 50)
+				refresh_lualine(50)
 			end,
 		})
 	end,

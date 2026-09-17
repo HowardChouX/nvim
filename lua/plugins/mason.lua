@@ -1,24 +1,60 @@
--- lua/mason.lua
--- Mason 安装和自动安装
 ---@diagnostic disable: undefined-global
+
+local function java_home()
+	local configured = vim.env.JAVA_HOME
+	if configured and vim.fn.executable(vim.fs.joinpath(configured, "bin", "java")) == 1 then
+		return configured
+	end
+
+	for _, candidate in ipairs({
+		"/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home",
+		"/usr/local/opt/openjdk/libexec/openjdk.jdk/Contents/Home",
+	}) do
+		if vim.fn.executable(vim.fs.joinpath(candidate, "bin", "java")) == 1 then
+			return candidate
+		end
+	end
+
+	if vim.fn.has("mac") == 1 and vim.fn.executable("/usr/libexec/java_home") == 1 then
+		local result = vim.system({ "/usr/libexec/java_home" }, { text = true }):wait()
+		if result.code == 0 then
+			local detected = vim.trim(result.stdout or "")
+			if detected ~= "" then
+				return detected
+			end
+		end
+	end
+end
 
 return {
 	"mason-org/mason.nvim",
-	event = "VeryLazy",
-	cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
+	event = { "BufReadPre", "BufNewFile" },
+	cmd = {
+		"Mason",
+		"MasonInstall",
+		"MasonUpdate",
+		"MasonUninstall",
+		"MasonUninstallAll",
+		"MasonLog",
+		"MasonToolsInstall",
+		"MasonToolsInstallSync",
+		"MasonToolsUpdate",
+		"MasonToolsUpdateSync",
+		"MasonToolsClean",
+	},
 	dependencies = {
 		"mason-org/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		"neovim/nvim-lspconfig",
 	},
-	config = function()
-		-- 【关键】环境变量注入，确保 vim.lsp.enable 能找到 Mason 安装的二进制文件
-		local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
-		if not string.find(vim.env.PATH, mason_bin) then
-			vim.env.PATH = mason_bin .. (vim.loop.os_uname().sysname == "Windows_NT" and ";" or ":") .. vim.env.PATH
+	init = function()
+		local mason_bin = vim.fs.joinpath(vim.fn.stdpath("data"), "mason", "bin")
+		if not vim.env.PATH:find(mason_bin, 1, true) then
+			local separator = vim.uv.os_uname().sysname == "Windows_NT" and ";" or ":"
+			vim.env.PATH = mason_bin .. separator .. vim.env.PATH
 		end
-
-		-- Mason UI配置
+	end,
+	config = function()
 		require("mason").setup({
 			ui = {
 				icons = {
@@ -29,40 +65,19 @@ return {
 			},
 		})
 
-		-- Mason LSP配置 - 使用推荐的自动启用方式
-		require("mason-lspconfig").setup({
-			ensure_installed = {
-				"lua_ls",
-				"pyright",
-				"clangd",
-				"jdtls",
-			},
-			automatic_enable = true,
-		})
+		-- 把 blink.cmp 的能力集交给所有 LSP，确保 snippet / labelDetails / resolve 等补全正常。
+		local blink_ok, blink = pcall(require, "blink.cmp")
+		if blink_ok then
+			vim.lsp.config("*", { capabilities = blink.get_lsp_capabilities() })
+		end
 
-		-- 使用Neovim 0.11+的vim.lsp.config API配置服务器
-		-- 这些配置会被mason-lspconfig自动应用到已安装的服务器
-
-		-- Lua LSP配置
 		vim.lsp.config("lua_ls", {
-			filetypes = { "lua" },
 			settings = {
-				Lua = {
-					diagnostics = {
-						globals = { "vim" },
-					},
-				},
+				Lua = { diagnostics = { globals = { "vim" } } },
 			},
 		})
 
-		-- Python LSP配置
 		vim.lsp.config("pyright", {
-			filetypes = { "python" },
-			handlers = {
-				-- 禁用 pyright 的格式化，让 conform 处理
-				["textDocument/formatting"] = nil,
-				["textDocument/rangeFormatting"] = nil,
-			},
 			settings = {
 				python = {
 					analysis = {
@@ -75,7 +90,6 @@ return {
 			},
 		})
 
-		-- C/C++ LSP配置
 		vim.lsp.config("clangd", {
 			filetypes = { "c", "cpp", "objc", "objcpp" },
 			cmd = {
@@ -91,77 +105,115 @@ return {
 			},
 		})
 
-		-- JDTLS 配置
-		vim.lsp.config("jdtls", {
-			filetypes = { "java" },
-			cmd = { "jdtls" },
-			root_dir = function(fname)
-				return vim.fs.root(fname, {
-					"mvnw",
-					"gradlew",
-					".git",
-					"pom.xml",
-					"build.gradle",
-					"build.gradle.kts",
-					"build.xml",
-					"settings.gradle",
-				}) or vim.fn.getcwd()
-			end,
-			init_options = {
-				bundles = {},
-			},
-			settings = {
-				java = {
-					home = vim.fn.exepath("java") or "/usr/lib/jvm/default",
+		-- 前端：vtsls 负责 JS/TS/React，并把 vue 并入 filetypes 以支持 Vue SFC 里的 TS。
+		-- vue_ls 在 hybrid 模式下需要 vtsls + @vue/typescript-plugin 协同工作。
+		local vue_plugin_path = vim.fs.joinpath(
+			vim.fn.stdpath("data"),
+			"mason",
+			"packages",
+			"vue-language-server",
+			"node_modules",
+			"@vue",
+			"language-server"
+		)
+		local vtsls = {
+			filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" },
+		}
+		if vim.uv.fs_stat(vue_plugin_path) then
+			vtsls.settings = {
+				vtsls = {
+					tsserver = {
+						globalPlugins = {
+							{
+								name = "@vue/typescript-plugin",
+								location = vue_plugin_path,
+								languages = { "vue" },
+								configNamespace = "typescript",
+							},
+						},
+					},
 				},
-			},
+			}
+		end
+		vim.lsp.config("vtsls", vtsls)
+
+		local servers = {
+			"lua_ls",
+			"pyright",
+			"clangd",
+			"vtsls",
+			"vue_ls",
+			"html",
+			"cssls",
+			"emmet_language_server",
+		}
+		local detected_java_home = java_home()
+		if detected_java_home then
+			vim.env.JAVA_HOME = detected_java_home
+			local java_bin = vim.fs.joinpath(detected_java_home, "bin")
+			if not vim.env.PATH:find(java_bin, 1, true) then
+				vim.env.PATH = java_bin .. ":" .. vim.env.PATH
+			end
+			vim.lsp.config("jdtls", {
+				cmd = { "jdtls" },
+				root_dir = function(bufnr, on_dir)
+					local filename = vim.api.nvim_buf_get_name(bufnr)
+					local root = vim.fs.root(filename, {
+						"mvnw",
+						"gradlew",
+						"pom.xml",
+						"build.gradle",
+						"build.gradle.kts",
+						"settings.gradle",
+						".git",
+					})
+					on_dir(root or vim.fs.dirname(filename))
+				end,
+				settings = { java = { home = detected_java_home } },
+			})
+			table.insert(servers, "jdtls")
+		else
+			vim.schedule(function()
+				vim.notify_once("未检测到 JDK，已跳过 jdtls；请设置 JAVA_HOME", vim.log.levels.WARN)
+			end)
+		end
+
+		-- 配置完成后再启用，确保首个 FileType 使用最终配置。
+		require("mason-lspconfig").setup({
+			ensure_installed = servers,
+			automatic_enable = servers,
 		})
 
-		-- 确保 jdtls 附加到所有 Java buffer（解决 yazi/dashboard 打开时不触发）
-		vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
-			pattern = "*.java",
-			group = vim.api.nvim_create_augroup("user_jdtls_attach", { clear = true }),
-			callback = function(args)
-				if vim.bo[args.buf].filetype ~= "java" then
-					return
-				end
-				if vim.lsp.get_clients({ bufnr = args.buf, name = "jdtls" })[1] then
-					return
-				end
-				-- 查找已运行的 jdtls，强制复用 root_dir
-				local existing = vim.lsp.get_clients({ name = "jdtls" })[1]
-				local jdtls_cfg = vim.lsp.config["jdtls"]
-				if jdtls_cfg and existing and existing.root_dir then
-					local cfg = vim.deepcopy(jdtls_cfg)
-					cfg.root_dir = existing.root_dir
-					pcall(vim.lsp.start, cfg, { bufnr = args.buf })
-				end
-			end,
-		})
-
-		-- LspAttach 事件处理
+		local attach_group = vim.api.nvim_create_augroup("UserLspAttach", { clear = true })
 		vim.api.nvim_create_autocmd("LspAttach", {
+			group = attach_group,
 			callback = function(args)
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
-				if not client then
-					return
-				end
-
 				local bufnr = args.buf
-				if not bufnr or bufnr == 0 or not vim.api.nvim_buf_is_valid(bufnr) then
+				if not client or not vim.api.nvim_buf_is_valid(bufnr) then
 					return
 				end
 
-				local filetype = vim.bo[bufnr].filetype
+				local highlight_filetypes = {
+					lua = true,
+					python = true,
+					c = true,
+					cpp = true,
+					java = true,
+					javascript = true,
+					javascriptreact = true,
+					typescript = true,
+					typescriptreact = true,
+					vue = true,
+					rust = true,
+					go = true,
+				}
 
-				-- Document Highlight (仅在编程语言文件上启用)
-				local highlight_filetypes =
-					{ "lua", "python", "c", "cpp", "java", "javascript", "typescript", "rust", "go" }
 				if
-					client.server_capabilities.documentHighlightProvider
-					and vim.tbl_contains(highlight_filetypes, filetype)
+					client:supports_method("textDocument/documentHighlight")
+					and highlight_filetypes[vim.bo[bufnr].filetype]
 				then
-					local group = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })
+					local group = vim.api.nvim_create_augroup("UserLspDocumentHighlight", { clear = false })
 					vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
 					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 						group = group,
@@ -175,64 +227,35 @@ return {
 					})
 				end
 
-				-- Inlay Hints
 				if client:supports_method("textDocument/inlayHint") then
 					vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 				end
-
-				-- CodeLens
 				if client:supports_method("textDocument/codeLens") then
 					vim.lsp.codelens.enable(true, { bufnr = bufnr })
 				end
-
-				-- Inline Completion
 				if client:supports_method("textDocument/inlineCompletion") then
 					vim.lsp.inline_completion.enable(true, { client_id = client.id })
-					vim.keymap.set("i", "<M-CR>", function()
-						vim.lsp.inline_completion.accept()
-					end, {
-						buffer = bufnr,
-						desc = "Accept inline completion",
-					})
-					vim.keymap.set("i", "<M-]>", function()
-						vim.lsp.inline_completion.select({ count = 1 })
-					end, {
-						buffer = bufnr,
-						desc = "Next inline completion",
-					})
-					vim.keymap.set("i", "<M-[>", function()
-						vim.lsp.inline_completion.select({ count = -1 })
-					end, {
-						buffer = bufnr,
-						desc = "Prev inline completion",
-					})
 				end
-
-				-- Linked Editing Range
 				if client:supports_method("textDocument/linkedEditingRange") then
 					vim.lsp.linked_editing_range.enable(true, { client_id = client.id })
 				end
 
-				-- 排除不需要通知的 LSP 服务器
-				if client.name == "render-markdown" then
-					return
+				if client.name ~= "render-markdown" then
+					vim.notify_once(client.name .. " ready", vim.log.levels.INFO, { title = "LSP" })
 				end
-
-				vim.notify(client.name .. " ready", vim.log.levels.INFO, {
-					title = "LSP",
-				})
 			end,
 		})
 
-		-- Mason工具安装器
 		require("mason-tool-installer").setup({
 			ensure_installed = {
 				"stylua",
 				"black",
 				"clang-format",
 				"google-java-format",
+				"sql-formatter",
+				"prettier",
 			},
-			auto_update = true,
+			auto_update = false,
 			run_on_start = true,
 		})
 	end,
